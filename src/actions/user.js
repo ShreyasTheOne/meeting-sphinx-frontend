@@ -48,7 +48,6 @@ export const verifyUser = () => {
 export const loginUser = (state, code) => {
     return dispatch => {
         if (state === 'pasta') {
-            console.log("loginUserINSIDE")
             axios({
                 url: apiAuthLogin(),
                 method: 'post',
