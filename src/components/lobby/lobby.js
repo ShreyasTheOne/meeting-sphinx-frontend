@@ -13,6 +13,7 @@ import {
 import './css/index.css'
 import NavBar from '../nav/index'
 import { Button, Card, Header, Icon, Image } from 'semantic-ui-react'
+import Chat from '../chat'
 
 
 class Lobby extends Component {
@@ -133,7 +134,7 @@ class Lobby extends Component {
                                     <Icon name='copy' />
                                 </Button>
                             </Button.Group>
-                            <Scrollbars>
+                            <Scrollbars style={{ width: 1000, height: 600 }}>
                                 <div id='lobby-scrollbars'>
                                 <Header id='lobby-orgs'>
                                     Organisers
@@ -193,7 +194,7 @@ class Lobby extends Component {
                             </Scrollbars>
                         </div>
                         <div id='lobby-chat-div'>
-                            
+                            <Chat/>
                         </div>
                     </div>
                 </div>
