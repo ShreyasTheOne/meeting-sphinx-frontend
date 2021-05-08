@@ -27,7 +27,7 @@ class Login extends Component {
 
                     <div id='login-button-div'>
                         <Image 
-                            size={"small"} 
+                            size={"large"} 
                             src={logo_hosted_url()}
                             id='sphinx-logo'
                         />

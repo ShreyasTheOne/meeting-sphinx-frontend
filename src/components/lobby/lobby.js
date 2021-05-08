@@ -21,9 +21,14 @@ class Lobby extends Component {
         const user = UserInformation.data
         
         return (
-            <div>
-                
-            </div>
+            <>
+                <div>
+                    MEETING CODE: {code}
+                </div>
+                <div>
+                    USER INFO: {user.full_name}, {user.email}
+                </div>
+            </>
         )
     }
 }
