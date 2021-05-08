@@ -115,11 +115,18 @@ class Home extends Component {
 
     createMeeting = (custom) => {
         const { meeting_link, meeting_title } = this.state
-        
+        if (!meeting_title) {
+            this.setState({
+                createModalInputError: true,
+                createErrorMessage: "Please enter a meeting title!"
+            })
+            return
+        }
         if (custom) {
             if (!meeting_link) {
                 this.setState({
                     createModalInputError: true,
+                    createErrorMessage: "Please enter a meeting link!"
                 })
                 return
             } else {
@@ -135,7 +142,7 @@ class Home extends Component {
                     method: 'post',
                     data: data
                 }).then(res => {
-                    console.log(res)
+                    window.location = routeLobby(res.data.meeting_code)
                 }).catch(err => {
                     console.log(err)
                 })
@@ -152,7 +159,7 @@ class Home extends Component {
                 method: 'post',
                 data: data
             }).then(res => {
-                console.log(res)
+                window.location = routeLobby(res.data.meeting_code)
             }).catch(err => {
                 console.log(err)
             })
@@ -166,6 +173,7 @@ class Home extends Component {
             createModalOpen, 
             joinModalOpen,
             createModalInputError,
+            createErrorMessage,
             joinModalInputError,
             joinErrorMessage,
             num_meetings
@@ -267,7 +275,11 @@ class Home extends Component {
                     closeOnDimmerClick
                     closeOnEscape
                     open={createModalOpen}
-                    onClose={() => {this.setState({createModalOpen: false})}}
+                    onClose={() => {this.setState({
+                        createModalOpen: false, 
+                        createModalInputError: false,
+                        createErrorMessage: ''
+                    })}}
                 >
                     <Modal.Header>
                         <Input
@@ -302,6 +314,12 @@ class Home extends Component {
                             fluid
                             placeholder='Enter a custom meeting link...'
                         />
+                        {createModalInputError && 
+                            <Message
+                                content={createErrorMessage}
+                                error
+                            />
+                        }
                     </Modal.Content>
                 </Modal>
                 <Modal
@@ -311,7 +329,11 @@ class Home extends Component {
                     closeOnEscape
                     dimmer
                     open={joinModalOpen}
-                    onClose={() => {this.setState({joinModalOpen: false})}}
+                    onClose={() => {this.setState({
+                        joinModalOpen: false, 
+                        joinModalInputError: false,
+                        joinErrorMessage: ''
+                    })}}
                 >
                     <Modal.Header>
                         Join a Meeting
