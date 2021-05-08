@@ -1,4 +1,5 @@
 const {app, BrowserWindow} = require('electron')
+require("./recording_detection")
 
 function createWindow () {
     const mainWindow = new BrowserWindow({
