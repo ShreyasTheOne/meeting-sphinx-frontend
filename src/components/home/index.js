@@ -5,69 +5,32 @@ import {
     Button, 
     Container,
     Grid, 
-    Header, 
-    Popup, 
     Modal,
-    Image, 
-    Icon,
     Input,
     Divider,
     Message
 } from 'semantic-ui-react'
-import { apiAuthLogout, apiMeeting, apiMeetingJoin, routeHome, routeLobby } from '../../urls'
-
+import NavBar from '../nav/index'
+import { apiMeeting, apiMeetingJoin } from '../../urls'
 import './css/index.css'
+import { Redirect } from 'react-router'
 
 class Home extends Component {
 
     constructor (props) {
         super(props)
         this.state = {
-            now: new Date().toLocaleString(),
             createModalOpen: false ,
             joinModalOpen: false,
             joinModalInputError: false,
             joinErrorMessage: '',
             createModalInputError: false,
             createErrorMessage: '',
-            num_meetings: 0,
+            meeting_joined: false,
+            meeting_code: '',
         }
     }
 
-    logout = () => {
-        axios({
-            url: apiAuthLogout(),
-            method: 'post',
-        }).then(res => {
-            window.location = routeHome()
-        }).catch(e => {
-            window.location = routeHome()
-        })
-    }
-
-    toTitleCase (input) {
-        if (!input) return ''
-        let words = input.split(' ');  
-        let ans = [];  
-        words.forEach(element => {  
-            ans.push(element[0].toUpperCase() + element.slice(1, element.length).toLowerCase());  
-        });  
-        return ans.join(' '); 
-    }
-
-    componentDidMount () {
-        this.tick()
-    }
-
-    tick = () => {
-        setInterval(
-            () => {
-                this.setState({
-                    now: new Date().toLocaleString(),
-                })
-            }, 1000
-        )
-    }
 
     joinMeeting = () => {
         const { meeting_code } = this.state
@@ -78,36 +41,32 @@ class Home extends Component {
         }).then(res => {
             const error_code = res.data['error']
             const meeting_code = res.data['meeting_code']
-            switch (error_code) {
-                case -1:
-                    // Enter meeting as attendee
-                    window.location = routeLobby(meeting_code)
-                    break
-                case -2:
-                    // Enter meeting as organiser
-                    window.location = routeLobby(meeting_code)
-                    break
-                case -3:
-                    // Enter meeting as attendee
-                    window.location = routeLobby(meeting_code)
-                    break
-                case 1:
-                    // User banned
-                    this.setState({
-                        joinModalInputError: true,
-                        joinErrorMessage: "You are not allowed in this meeting!"
-                    })
-                    break
-                case 2:
-                    // Invalid meeting code
-                    this.setState({
-                        joinModalInputError: true,
-                        joinErrorMessage: "Invalid meeting code!"
-                    })
-                    break
-                default:
-                    break
+            if (error_code < 0) {
+                this.setState({
+                    meeting_joined: true,
+                    meeting_code: meeting_code
+                })
+            } else {
+                switch (error_code) {
+                    case 1:
+                        // User banned
+                        this.setState({
+                            joinModalInputError: true,
+                            joinErrorMessage: "You are not allowed in this meeting!"
+                        })
+                        break
+                    case 2:
+                        // Invalid meeting code
+                        this.setState({
+                            joinModalInputError: true,
+                            joinErrorMessage: "Invalid meeting code!"
+                        })
+                        break
+                    default:
+                        break
+                }
             }
+            
         }).catch(e => {
             console.log(e)
         })
@@ -142,7 +101,10 @@ class Home extends Component {
                     method: 'post',
                     data: data
                 }).then(res => {
-                    window.location = routeLobby(res.data.meeting_code)
+                    this.setState({
+                        meeting_joined: true,
+                        meeting_code: res.data.meeting_code
+                    })
                 }).catch(err => {
                     console.log(err)
                 })
@@ -159,7 +121,10 @@ class Home extends Component {
                 method: 'post',
                 data: data
             }).then(res => {
-                window.location = routeLobby(res.data.meeting_code)
+                this.setState({
+                    meeting_joined: true,
+                    meeting_code: res.data.meeting_code
+                })
             }).catch(err => {
                 console.log(err)
             })
@@ -167,66 +132,26 @@ class Home extends Component {
     }
 
     render(){
-        const { UserInformation } = this.props
         const { 
-            now, 
             createModalOpen, 
             joinModalOpen,
             createModalInputError,
             createErrorMessage,
             joinModalInputError,
             joinErrorMessage,
-            num_meetings
+            meeting_joined,
+            meeting_code
         } = this.state
-        const user = UserInformation.data
         
+        if (meeting_joined) {
+            return (
+                <Redirect to={`/lobby/${meeting_code}`} />
+            )
+        }
+
         return (
             <div id='home-container'>
-                <div id='home-nav'>
-                    <div id='home-nav-left'>
-                        <div>
-                            <Popup
-                                hideOnScroll
-                                position='bottom center'
-                                on="click"
-                                style={{ padding: "0px" }}
-                                trigger={
-                                    <Image
-                                        style={{ cursor: 'pointer' }}
-                                        src={user.profile_picture}
-                                        avatar
-                                        size='tiny'
-                                    />
-                                }
-                            >
-                                <Button
-                                    color='black'
-                                    size='large'
-                                    fluid
-                                    onClick={this.logout}
-                                >
-                                    <Icon name='log out' />
-                                    Logout
-                                </Button>
-                            </Popup>
-                        </div>
-                        <Header id='home-header' size='huge'>
-                            Hi, {this.toTitleCase(user.full_name)}!
-                        </Header>
-                    </div>
-                    <div id='home-nav-right'>
-                        <Button
-                            color='red'
-                            id='home-num-meetings'
-                            size='large'
-                        >
-                            {num_meetings} ongoing meetings
-                        </Button>
-                        <Header id='home-time' size='huge'>
-                            {now}
-                        </Header>
-                    </div>
-                </div>
+                <NavBar/>
                 <div id='home-content-container'>
                     <div id='home-content'>
                         <div id='home-title'>
@@ -366,6 +291,7 @@ class Home extends Component {
         )
     }
 }
+
 const mapStateToProps = state => {
     return {
         UserInformation: state.userInformation

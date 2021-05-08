@@ -1,0 +1,62 @@
+#lobby-container {
+    display: grid;
+    grid-template-rows: 1fr 5fr 1fr;
+    height: 100vh !important;
+    width: 100vw !important;    
+    background-color: white; 
+}
+
+#lobby-internal-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 2rem !important;
+}
+
+#lobby-meeting-heading {
+    font-size: 4.5rem;
+}
+
+#lobby-meeting-info {
+    grid-column: 1/1;
+}
+
+#lobby-joining-info {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+#lobby-chat-div {
+    grid-column: 2/2;
+}
+
+#lobby-people {
+    width: 100%;
+}
+
+#lobby-orgs {
+    margin-top: 1rem;
+}
+
+#lobby-atts {
+    margin-top: 3rem;
+}
+
+.lobby-person-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.lobby-ppp {
+    margin-right: 1rem;
+}
+
+.lobby-pfn {
+    text-align: center;
+    font-size: 1.5rem !important;
+}
+
+#lobby-scrollbars {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}

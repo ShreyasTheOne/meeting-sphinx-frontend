@@ -15,6 +15,7 @@
     "ps-list": "^7.2.0",
     "randomstring": "^1.1.5",
     "react": "^17.0.2",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
