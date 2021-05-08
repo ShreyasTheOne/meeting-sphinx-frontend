@@ -4,6 +4,10 @@ export const routeHome = () => {
     return 'http://localhost:3000/'
 }
 
+export const routeLobby = code => {
+    return `${routeHome()}lobby/${code}`
+}
+
 // Backend 
 
 export const apiBase = () => {
@@ -24,6 +28,10 @@ export const apiAuthLogout = () => {
 
 export const apiMeeting = () => {
     return `${apiBase()}meeting/`
+}
+
+export const apiMeetingJoin = () => {
+    return `${apiBase()}meeting/join/`
 }
 
 

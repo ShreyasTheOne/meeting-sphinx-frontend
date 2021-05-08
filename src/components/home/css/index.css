@@ -25,8 +25,15 @@
     align-items: center;
 }
 
+#home-num-meetings {
+    margin-right: 2rem !important;
+}
+
 #home-time {
     margin-right: 1rem;
+    align-self: center;
+    margin: 0 !important;
+    
 }
 
 #home-content-container {

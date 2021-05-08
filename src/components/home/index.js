@@ -11,9 +11,11 @@ import {
     Image, 
     Icon,
     Input,
-    Divider
+    Divider,
+    Message
 } from 'semantic-ui-react'
-import { apiAuthLogout, apiMeeting, routeHome } from '../../urls'
+import { apiAuthLogout, apiMeeting, apiMeetingJoin, routeHome, routeLobby } from '../../urls'
+
 import './css/index.css'
 
 class Home extends Component {
@@ -23,7 +25,12 @@ class Home extends Component {
         this.state = {
             now: new Date().toLocaleString(),
             createModalOpen: false ,
-            joinModalOpen: false
+            joinModalOpen: false,
+            joinModalInputError: false,
+            joinErrorMessage: '',
+            createModalInputError: false,
+            createErrorMessage: '',
+            num_meetings: 0,
         }
     }
 
@@ -62,9 +69,53 @@ class Home extends Component {
         )
     }
 
+    joinMeeting = () => {
+        const { meeting_code } = this.state
+        axios({
+            url: apiMeetingJoin(),
+            method: 'post',
+            data: {meeting_code}
+        }).then(res => {
+            const error_code = res.data['error']
+            const meeting_code = res.data['meeting_code']
+            switch (error_code) {
+                case -1:
+                    // Enter meeting as attendee
+                    window.location = routeLobby(meeting_code)
+                    break
+                case -2:
+                    // Enter meeting as organiser
+                    window.location = routeLobby(meeting_code)
+                    break
+                case -3:
+                    // Enter meeting as attendee
+                    window.location = routeLobby(meeting_code)
+                    break
+                case 1:
+                    // User banned
+                    this.setState({
+                        joinModalInputError: true,
+                        joinErrorMessage: "You are not allowed in this meeting!"
+                    })
+                    break
+                case 2:
+                    // Invalid meeting code
+                    this.setState({
+                        joinModalInputError: true,
+                        joinErrorMessage: "Invalid meeting code!"
+                    })
+                    break
+                default:
+                    break
+            }
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
     createMeeting = (custom) => {
         const { meeting_link, meeting_title } = this.state
-
+        
         if (custom) {
             if (!meeting_link) {
                 this.setState({
@@ -114,10 +165,13 @@ class Home extends Component {
             now, 
             createModalOpen, 
             joinModalOpen,
-            createModalInputError
+            createModalInputError,
+            joinModalInputError,
+            joinErrorMessage,
+            num_meetings
         } = this.state
         const user = UserInformation.data
-
+        
         return (
             <div id='home-container'>
                 <div id='home-nav'>
@@ -153,6 +207,13 @@ class Home extends Component {
                         </Header>
                     </div>
                     <div id='home-nav-right'>
+                        <Button
+                            color='red'
+                            id='home-num-meetings'
+                            size='large'
+                        >
+                            {num_meetings} ongoing meetings
+                        </Button>
                         <Header id='home-time' size='huge'>
                             {now}
                         </Header>
@@ -222,7 +283,7 @@ class Home extends Component {
                         <Button
                             size='big'
                             fluid
-                            color='orange'
+                            color='red'
                             inverted
                             onClick={() => this.createMeeting(false)}
                         >
@@ -232,7 +293,7 @@ class Home extends Component {
                         <Input
                             error={createModalInputError}
                             action={{
-                                color:'orange',
+                                color:'red',
                                 content: 'Create',
                                 onClick: () => this.createMeeting(true)
                             }}
@@ -256,7 +317,27 @@ class Home extends Component {
                         Join a Meeting
                     </Modal.Header>
                     <Modal.Content>
-                        Would you like to join a meeting here or not?
+                        <Input
+                            error={joinModalInputError}
+                            action={{
+                                color:'red',
+                                content: 'Join',
+                                onClick: () => this.joinMeeting()
+                            }}
+                            onChange={(e, d) => this.setState({
+                                meeting_code: d.value, 
+                                joinModalInputError: false
+                            })}
+                            size='big'
+                            fluid
+                            placeholder='Enter a custom meeting link...'
+                        />
+                        {joinModalInputError && 
+                            <Message
+                                content={joinErrorMessage}
+                                error
+                            />
+                        }
                     </Modal.Content>
                 </Modal>
             </div>
