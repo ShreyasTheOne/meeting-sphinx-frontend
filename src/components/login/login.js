@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
-import { connect } from 'react-redux'
-import { Button } from 'semantic-ui-react'
-import { googleRedirect } from '../../urls'
+import { Button, Image } from 'semantic-ui-react'
+import { googleRedirect, logo_hosted_url } from '../../urls'
+import './css/index.css'
 
 class Login extends Component {
 
@@ -11,13 +11,36 @@ class Login extends Component {
 
     render () {
         return (
-            <div>
-                <Button
-                    color='black'
-                    onClick={this.login.bind(this)}
-                >
-                    Login With Google
-                </Button>
+            <div id='login-container'>
+                <div id='login-content'>
+                    <div id='login-title'>
+                        <div className='login-title-text'>
+                            The
+                        </div>
+                        <div className='login-title-text'>
+                            Meeting
+                        </div>
+                        <div className='login-title-text'>
+                            Sphinx
+                        </div>
+                    </div>
+
+                    <div id='login-button-div'>
+                        <Image 
+                            size={"small"} 
+                            src={logo_hosted_url()}
+                            id='sphinx-logo'
+                        />
+                        <Button
+                            fluid={false}
+                            color='black'
+                            size={'huge'}
+                            onClick={this.login.bind(this)}
+                        >
+                            Login With Google
+                        </Button>
+                    </div>
+                </div>
             </div>
         )
     }

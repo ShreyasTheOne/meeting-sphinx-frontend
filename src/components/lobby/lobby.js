@@ -1,15 +1,28 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 
-class Home extends Component {
+class Lobby extends Component {
+
+    constructor(props) {
+        super(props)
+        const { code } = this.props.match.params
+        this.state = {
+            code
+        }
+    }
+
+    componentDidMount () {
+
+    }
 
     render(){
+        const { code } = this.state
         const { UserInformation } = this.props
         const user = UserInformation.data
         
         return (
             <div>
-                Hello {user.full_name}
+                
             </div>
         )
     }
@@ -29,4 +42,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Home)
+)(Lobby)

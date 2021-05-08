@@ -4,7 +4,8 @@ import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
 
 import Login from './login/login'
 import OnLogin from './login/on_login'
-import Home from './home'
+import Lobby from './lobby/lobby'
+import Home from './home/index'
 import { verifyUser } from '../actions/user'
 
 class App extends Component {
@@ -49,6 +50,11 @@ class App extends Component {
                             exact
                             path={`${match.path}`}
                             component={Home}
+                        />
+                        <Route
+                            exact
+                            path={`${match.path}lobby/:code/`}
+                            component={Lobby}
                         />
                     </Switch>
                 </Router>
