@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { apiAuthLogin, apiAuthVerify, routeHome } from '../urls'
+import { apiAuthLogin, apiAuthVerify, apiAuthLogout, routeHome } from '../urls'
 import { 
     CHANGE_USER_LOGIN_LOADED_ERROR, 
     INITIALISE_USER, 
@@ -76,5 +76,18 @@ export const loginUser = (state, code) => {
             })
             window.location = routeHome()
         }
+    }
+}
+
+export const logoutUser = () => {
+    return dispatch => {
+        axios({
+            url: apiAuthLogout(),
+            method: 'post',
+        }).then(res => {
+            window.location = routeHome()
+        }).catch(e => {
+            window.location = routeHome()
+        })
     }
 }

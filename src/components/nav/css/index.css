@@ -1,0 +1,34 @@
+#home-nav{
+    grid-row: 1/1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 2rem !important;
+}
+
+#home-nav-left {
+    display: flex;
+    flex-direction: row;
+}
+
+#home-nav-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#home-num-meetings {
+    margin-right: 2rem !important;
+}
+
+#home-time {
+    margin-right: 1rem;
+    align-self: center;
+    margin: 0 !important;
+    
+}
+
+#home-header {
+    margin-left: 1.2rem;
+}

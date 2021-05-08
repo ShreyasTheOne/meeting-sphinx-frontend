@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
+import { Route, Switch, BrowserRouter as Router, Redirect } from 'react-router-dom'
 
 import Login from './login/login'
 import OnLogin from './login/on_login'
@@ -39,6 +39,9 @@ class App extends Component {
                             path={`${match.path}redirect/`}
                             component={OnLogin}
                         />
+                        <Redirect
+                            to=''
+                        />
                     </Switch>
                 </Router>
             )
@@ -56,6 +59,7 @@ class App extends Component {
                             path={`${match.path}lobby/:code/`}
                             component={Lobby}
                         />
+                        <Redirect to=''/>
                     </Switch>
                 </Router>
             )
@@ -65,13 +69,16 @@ class App extends Component {
                     <Switch>
                         <Route
                             exact
-                            path={`${match.path}`}
-                            component={Login}
+                            path={`${match.path}redirect/`}
+                            component={OnLogin}
                         />
                         <Route
                             exact
-                            path={`${match.path}redirect/`}
-                            component={OnLogin}
+                            path={`${match.path}`}
+                            component={Login}
+                        />
+                        <Redirect
+                            to='/'
                         />
                     </Switch>
                 </Router>
