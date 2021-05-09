@@ -4,13 +4,13 @@
     height: 100%;
     width: 100%;
     background-color: #1B1D1F;
-
+    border-radius: 5px;
+    margin-top: 0.5rem;
 }
 
 #chat-messages {
     display: flex;
     flex-direction: column;
-
 }
 
 #chat-input-container {
