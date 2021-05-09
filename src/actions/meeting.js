@@ -1,5 +1,3 @@
-import axios from 'axios'
-import { apiWSMeetings } from '../urls'
 import { INITIALISE_MEETING, UPDATE_ATTENDEES, UPDATE_ORGANISERS } from './types'
 
 

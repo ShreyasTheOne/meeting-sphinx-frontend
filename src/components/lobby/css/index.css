@@ -1,6 +1,6 @@
 #lobby-container {
     display: grid;
-    grid-template-rows: 1fr 5fr 1fr;
+    grid-template-rows: 1fr 5fr;
     height: 100vh !important;
     width: 100vw !important;    
     background-color: white; 
@@ -8,8 +8,9 @@
 
 #lobby-internal-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 2rem !important;
+    grid-template-columns: 2fr 1fr;
+    
+    height: 100%;
 }
 
 #lobby-meeting-heading {
@@ -18,6 +19,8 @@
 
 #lobby-meeting-info {
     grid-column: 1/1;
+    
+    padding: 2rem !important;
 }
 
 #lobby-joining-info {
@@ -26,6 +29,8 @@
 }
 
 #lobby-chat-div {
+    padding-right: 15px !important;
+    padding-bottom: 15px !important;
     grid-column: 2/2;
 }
 

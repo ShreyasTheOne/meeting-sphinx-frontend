@@ -1,0 +1,16 @@
+#chat-container{
+    display: grid;
+    grid-template-rows: 15fr 1fr;
+    height: 100%;
+    width: 100%;
+    background-color: #1B1D1F;
+
+}
+
+#chat-messages {
+
+}
+
+#chat-input-container {
+
+}
