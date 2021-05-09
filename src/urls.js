@@ -59,3 +59,7 @@ export function apiWSBase() {
 export function apiWSMeetings (meeting_code) {
     return `${apiWSBase()}meetings/${meeting_code}/`
 }
+
+export function apiWSChat (meeting_code) {
+    return `${apiWSBase()}meetings/${meeting_code}/chat/`
+}

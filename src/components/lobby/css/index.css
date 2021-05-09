@@ -19,6 +19,7 @@
 
 #lobby-meeting-info {
     grid-column: 1/1;
+    
     padding: 2rem !important;
 }
 
@@ -28,6 +29,8 @@
 }
 
 #lobby-chat-div {
+    padding-right: 15px !important;
+    padding-bottom: 15px !important;
     grid-column: 2/2;
 }
 

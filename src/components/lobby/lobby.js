@@ -119,7 +119,9 @@ class Lobby extends Component {
                             >
                                 <Button
                                     color='black'
-                                    onClick={() => {window.open(MeetingInformation.info.meeting_link)}}
+                                    // onClick={() => {window.open(MeetingInformation.info.meeting_link)}}
+                                    onClick={() => {alert("https://www.google.com")}}
+                                    // onClick={() => {window.open("https://www.google.com")}}
                                 >
                                     Join Video Conference
                                 </Button>
@@ -194,7 +196,7 @@ class Lobby extends Component {
                             </Scrollbars>
                         </div>
                         <div id='lobby-chat-div'>
-                            <Chat/>
+                            <Chat meetingCode={MeetingInformation.info.meeting_code}/>
                         </div>
                     </div>
                 </div>
