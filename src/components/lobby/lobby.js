@@ -12,7 +12,7 @@ import {
 } from '../../actions/meeting'
 import './css/index.css'
 import NavBar from '../nav/index'
-import { Button, Card, Header, Icon, Image } from 'semantic-ui-react'
+import { Button, Card, Header, Icon, Image, Loader } from 'semantic-ui-react'
 import Chat from '../chat'
 
 
@@ -94,14 +94,7 @@ class Lobby extends Component {
         const user = UserInformation.data
         if (MeetingInformation.loaded === false) {
             return (
-                <>
-                    <div>
-                        MEETING CODE: {code}
-                    </div>
-                    <div>
-                        USER INFO: {user.full_name}, {user.email}
-                    </div>
-                </>
+                <Loader active />
             )
         } else {
             return (
@@ -119,9 +112,9 @@ class Lobby extends Component {
                             >
                                 <Button
                                     color='black'
-                                    // onClick={() => {window.open(MeetingInformation.info.meeting_link)}}
-                                    onClick={() => {alert("https://www.google.com")}}
-                                    // onClick={() => {window.open("https://www.google.com")}}
+                                    as={'a'}
+                                    href={"https://meet.google.com/pbg-gjpu-xhp?authuser=1"}
+                                    target='_blank'
                                 >
                                     Join Video Conference
                                 </Button>
@@ -139,7 +132,7 @@ class Lobby extends Component {
                             <Scrollbars style={{ width: 1000, height: 600 }}>
                                 <div id='lobby-scrollbars'>
                                 <Header id='lobby-orgs'>
-                                    Organisers
+                                    Organiser
                                 </Header>
                                 <Card.Group itemsPerRow={3}>
                                     {
@@ -196,7 +189,10 @@ class Lobby extends Component {
                             </Scrollbars>
                         </div>
                         <div id='lobby-chat-div'>
-                            <Chat meetingCode={MeetingInformation.info.meeting_code}/>
+                            <Chat 
+                                meetingCode={MeetingInformation.info.meeting_code}
+                                user={user}
+                            />
                         </div>
                     </div>
                 </div>
