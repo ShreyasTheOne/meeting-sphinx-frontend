@@ -1,0 +1,6 @@
+#meeting-container {
+    height: 650px !important;
+    width: 100% !important;  
+    border-radius: 5px !important;  
+    background-color: black; 
+}

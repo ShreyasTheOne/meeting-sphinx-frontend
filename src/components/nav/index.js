@@ -12,6 +12,7 @@ import './css/index.css'
 import {
     logoutUser
 } from '../../actions/user'
+import { routeHome } from '../../urls'
 
 class NavBar extends Component {
 
@@ -19,7 +20,6 @@ class NavBar extends Component {
         super(props)
         this.state = {
             now: new Date().toLocaleString(),
-            num_meetings: 0
         }
     }
 
@@ -48,11 +48,10 @@ class NavBar extends Component {
     }
 
     render () {
-        const { UserInformation } = this.props
+        const { UserInformation, show_button } = this.props
         const user = UserInformation.data
-        const { now, num_meetings } = this.state
+        const { now } = this.state
         return (
-            <span>
             <div id='home-nav'>
                 <div id='home-nav-left'>
                     <div>
@@ -86,20 +85,22 @@ class NavBar extends Component {
                     </Header>
                 </div>
                 <div id='home-nav-right'>
-                    <Button
-                        color='red'
-                        id='home-num-meetings'
-                        size='large'
-                    >
-                        {num_meetings} ongoing meetings
-                    </Button>
+                    {
+                        show_button &&
+                            <Button
+                            color='red'
+                            id='home-num-meetings'
+                            size='large'
+                            onClick={() => window.location=routeHome()}
+                        >
+                            Leave Meeeting
+                        </Button>
+                    }
                     <Header id='home-time' size='huge'>
                         {now}
                     </Header>
                 </div>
             </div>
-            <Divider/>
-            </span>
         )
     }
 }

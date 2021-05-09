@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { Scrollbars } from 'react-custom-scrollbars'
 import {connect} from 'react-redux'
-import { apiWSMeetings } from '../../urls'
+import { apiMeetingJoin, apiWSMeetings } from '../../urls'
 import  {
     USER_JOINED,
     USER_LEFT,
@@ -12,8 +12,10 @@ import {
 } from '../../actions/meeting'
 import './css/index.css'
 import NavBar from '../nav/index'
-import { Button, Card, Header, Icon, Image, Loader } from 'semantic-ui-react'
+import { Button, Card, Header, Icon, Image, Loader, Modal } from 'semantic-ui-react'
 import Chat from '../chat'
+import People from './people'
+import Meeting from './meeting'
 
 
 class Lobby extends Component {
@@ -88,7 +90,7 @@ class Lobby extends Component {
     }
 
     render(){
-        const { code } = this.state
+        const { code, joinModalOpen } = this.state
         const { UserInformation, MeetingInformation } = this.props
         const { organisers, attendees } = MeetingInformation
         const user = UserInformation.data
@@ -97,9 +99,10 @@ class Lobby extends Component {
                 <Loader active />
             )
         } else {
-            return (
-                <div id='lobby-container' >
-                    <NavBar/>
+            if (MeetingInformation.info.meeting_link === 'pasta') {
+                return (
+                    <div id='lobby-container' >
+                    <NavBar show_button={true}/>
                     <div id='lobby-internal-container'>
                         <div id='lobby-meeting-info'>
                             <div>
@@ -112,11 +115,9 @@ class Lobby extends Component {
                             >
                                 <Button
                                     color='black'
-                                    as={'a'}
-                                    href={"https://meet.google.com/pbg-gjpu-xhp?authuser=1"}
-                                    target='_blank'
+                                    onClick={() => {this.setState({joinModalOpen: true})}}
                                 >
-                                    Join Video Conference
+                                    See Participants
                                 </Button>
                                 <Button
                                     labelPosition='right'
@@ -129,64 +130,22 @@ class Lobby extends Component {
                                     <Icon name='copy' />
                                 </Button>
                             </Button.Group>
-                            <Scrollbars style={{ width: 1000, height: 600 }}>
-                                <div id='lobby-scrollbars'>
-                                <Header id='lobby-orgs'>
-                                    Organiser
-                                </Header>
-                                <Card.Group itemsPerRow={3}>
-                                    {
-                                        organisers.map((p, index) => {
-                                            return (
-                                                <Card
-                                                    key={index}
-                                                    color={'black'}
-                                                    fluid
-                                                >
-                                                    <Card.Content>
-                                                        <div className='lobby-person-card'>
-                                                            <Image className='lobby-ppp' circular size={"mini"} src={p['profile_picture']}/>
-                                                            <span
-                                                                className='lobby-pfn'
-                                                            >
-                                                                {this.toTitleCase(p['full_name'])}
-                                                            </span>
-                                                        </div>
-                                                    </Card.Content>
-                                                </Card>
-                                            )
-                                        })
-                                    }
-                                </Card.Group>
-                                <Header id='lobby-atts'>
-                                    Attendees
-                                </Header>
-                                <Card.Group itemsPerRow={3}>
-                                    {
-                                        attendees.map((p, index) => {
-                                            return (
-                                                <Card
-                                                    key={index}
-                                                    color={'blue'}
-                                                    fluid
-                                                >
-                                                    <Card.Content>
-                                                        <div className='lobby-person-card'>
-                                                            <Image className='lobby-ppp' circular size={"mini"} src={p['profile_picture']}/>
-                                                            <span
-                                                                className='lobby-pfn'
-                                                            >
-                                                                {this.toTitleCase(p['full_name'])}
-                                                            </span>
-                                                        </div>
-                                                    </Card.Content>
-                                                </Card>
-                                            )
-                                        })
-                                    }
-                                </Card.Group>
-                                </div>
-                            </Scrollbars>
+                            <Meeting/>
+                            <Modal
+                                size='large'
+                                closeIcon
+                                closeOnDimmerClick
+                                closeOnEscape
+                                dimmer
+                                open={joinModalOpen}
+                                onClose={() => {this.setState({
+                                    joinModalOpen: false, 
+                                })}}
+                            >
+                                <Modal.Content>
+                                <People organisers={organisers} attendees={attendees}/>
+                                </Modal.Content>
+                            </Modal>
                         </div>
                         <div id='lobby-chat-div'>
                             <Chat 
@@ -196,7 +155,52 @@ class Lobby extends Component {
                         </div>
                     </div>
                 </div>
-            )
+                )
+            } else {
+                return (
+                    <div id='lobby-container' >
+                        <NavBar show_button={true}/>
+                        <div id='lobby-internal-container'>
+                            <div id='lobby-meeting-info'>
+                                <div>
+                                    <Header id='lobby-meeting-heading'>
+                                        {this.fitTitle(MeetingInformation.info.title)}
+                                    </Header>
+                                </div>
+                                <Button.Group
+                                    id='lobby-joining-info'
+                                >
+                                    <Button
+                                        color='black'
+                                        as={'a'}
+                                        href={"https://meet.google.com/pbg-gjpu-xhp?authuser=1"}
+                                        target='_blank'
+                                    >
+                                        Join Video Conference
+                                    </Button>
+                                    <Button
+                                        labelPosition='right'
+                                        icon
+                                        primary
+                                        id='code-button'
+                                        onClick={() => {this.copyCode(MeetingInformation.info.meeting_code)}}
+                                    >
+                                        Copy Joining Info
+                                        <Icon name='copy' />
+                                    </Button>
+                                </Button.Group>
+                                <People organisers={organisers} attendees={attendees}/>
+                            </div>
+                            <div id='lobby-chat-div'>
+                                <Chat 
+                                    meetingCode={MeetingInformation.info.meeting_code}
+                                    user={user}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         }
     }
 }
