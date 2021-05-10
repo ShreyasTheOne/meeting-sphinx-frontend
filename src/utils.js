@@ -13,3 +13,13 @@ export function getCookie (cname) {
     }
     return "";
 }
+
+export function toTitleCase (input) {
+    if (!input) return ''
+    let words = input.split(' ');  
+    let ans = [];  
+    words.forEach(element => {  
+        ans.push(element[0].toUpperCase() + element.slice(1, element.length).toLowerCase());  
+    });  
+    return ans.join(' '); 
+}

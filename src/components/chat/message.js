@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import { Header, Image } from 'semantic-ui-react'
+import { toTitleCase } from '../../utils'
 import './css/message.css'
 var moment = require('moment')  
 
@@ -8,17 +9,6 @@ class MyMessage extends Component {
     constructor (props) {
         super(props)
     }
-
-    toTitleCase (input) {
-        if (!input) return ''
-        let words = input.split(' ');  
-        let ans = [];  
-        words.forEach(element => {  
-            ans.push(element[0].toUpperCase() + element.slice(1, element.length).toLowerCase());  
-        });  
-        return ans.join(' '); 
-    }
-
 
     render () {
         const { m, again, self } = this.props
@@ -41,7 +31,7 @@ class MyMessage extends Component {
                         <div
                             className='message-user-name' 
                         >
-                            {this.toTitleCase(sender.full_name)}
+                            {toTitleCase(sender.full_name)}
                         </div>
                     </div>
                 }

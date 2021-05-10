@@ -16,6 +16,7 @@ import { Button, Card, Header, Icon, Image, Loader, Modal } from 'semantic-ui-re
 import Chat from '../chat'
 import People from './people'
 import Meeting from './meeting'
+import { toTitleCase } from '../../utils'
 
 
 class Lobby extends Component {
@@ -73,16 +74,6 @@ class Lobby extends Component {
         } else {
             return title
         }
-    }
-
-    toTitleCase (input) {
-        if (!input) return ''
-        let words = input.split(' ');  
-        let ans = [];  
-        words.forEach(element => {  
-            ans.push(element[0].toUpperCase() + element.slice(1, element.length).toLowerCase());  
-        });  
-        return ans.join(' '); 
     }
 
     copyCode = code => {
