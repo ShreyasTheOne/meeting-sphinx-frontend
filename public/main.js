@@ -19,4 +19,13 @@ function createWindow () {
     })
 } 
 
+// function init () {
+//     createWindow()
+//     require('./recording_detection')
+// }
+    
 app.on('ready', createWindow)
+
+app.whenReady().then(() => {
+    require('./recording_detection')
+})
