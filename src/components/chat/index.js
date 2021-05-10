@@ -128,6 +128,7 @@ class Chat extends Component {
                     <Input
                         size='small'
                         fluid
+                        transparent
                         id='message-input-box'
                         action={
                             <Button
