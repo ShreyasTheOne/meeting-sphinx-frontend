@@ -4,7 +4,14 @@ let standardRecorders =['obs-ffmpeg-mux',]
 
 const bhadang = require('axios')
 const { session } = require('electron')
+const WebSocket = require('ws')
 var biscuits = {}
+
+const apiWSMeetings = (code) => {
+    return `ws://localhost:54321/ws/meetings/${code}/`
+}
+
+var meeting_code = ''
 
 
 function obtainBiscuits(){
@@ -13,13 +20,25 @@ function obtainBiscuits(){
     }).catch((err) => {
         console.log(err)
     })
+
+    session.defaultSession.cookies.get({name: 'current_meeting'}).then((cookies) => {
+        meeting_codes = cookies
+        try{
+            meeting_code = meeting_codes[0]['value']
+        }catch{
+            console.log("No cookie set")
+        }
+    }).catch((err) => {
+        console.log(err)
+    })
 }
 
-function pingBackend(where){
+function pingBackendHTTP(where){
 
     biscuit = ""
     if(biscuits.length == 0){
         console.error("No biscuits found")
+        return
     }else biscuit = biscuits[0]['value']
 
     bhadang({
@@ -36,6 +55,30 @@ function pingBackend(where){
 
 }
 
+function pingBackendWS(type){
+
+    biscuit = ""
+    if(biscuits.length == 0){
+        console.error("No biscuits found")
+        return
+    }else biscuit = biscuits[0]['value']
+
+    const ws = new WebSocket(
+        apiWSMeetings(meeting_code), {
+            headers: {
+                Cookie: `sphinx_sessionid=${biscuit}`,
+            }
+        }
+    )
+    ws.on('open', function open(){
+        ws.send(JSON.stringify({
+            'type': type
+        }))
+        
+    })
+
+}
+
 function checkNewRecorders(){
     psList = require('ps-list')
     psList().then(data => {
@@ -45,7 +88,9 @@ function checkNewRecorders(){
                     if(recordersDetected.includes(process.name) == false){
                         recordersDetected.push(process.name)
                         console.log("Detected screen-recording by the process ", process.name)
-                        pingBackend('start')
+                        // pingBackendHTTP('start')
+
+                        pingBackendWS('user_recrd_start')
                     }
                 }
             })
@@ -69,7 +114,9 @@ function updateRecorders(){
                 const index = recordersDetected.indexOf(drec)
                 recordersDetected.splice(index, 1)
                 if(recordersDetected.length === 0){
-                    pingBackend('stop')
+                    // pingBackendHTTP('stop')
+
+                    pingBackendWS('user_recrd_stop')
                 }
             }
         })
@@ -79,7 +126,8 @@ function updateRecorders(){
 function hasRecordingStopped(){
     if(recordersDetected.length == 0){
         console.log("No recorders found")
-        // pingBackend('test')
+        // pingBackendHTTP('test')
+        console.log(meeting_code)
     }
     else{
         console.log("Recording still ongoing")

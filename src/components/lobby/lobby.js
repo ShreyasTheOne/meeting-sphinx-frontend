@@ -30,6 +30,8 @@ class Lobby extends Component {
             code,
             showEndMeetingModal: false
         }
+
+        document.cookie = `current_meeting=${code};max-age=604800`
     }
 
     componentDidMount () {
