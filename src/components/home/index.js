@@ -31,7 +31,6 @@ class Home extends Component {
         }
     }
 
-
     joinMeeting = () => {
         const { meeting_code } = this.state
         axios({
@@ -275,6 +274,7 @@ class Home extends Component {
                                 meeting_code: d.value, 
                                 joinModalInputError: false
                             })}
+                            id='join-code-input'
                             size='big'
                             fluid
                             placeholder='Enter meeting code'
