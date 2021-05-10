@@ -87,9 +87,6 @@ function checkNewRecorders(){
                 if(process.name == rec){
                     if(recordersDetected.includes(process.name) == false){
                         recordersDetected.push(process.name)
-                        console.log("Detected screen-recording by the process ", process.name)
-                        // pingBackendHTTP('start')
-
                         pingBackendWS('user_recrd_start')
                     }
                 }
@@ -114,24 +111,11 @@ function updateRecorders(){
                 const index = recordersDetected.indexOf(drec)
                 recordersDetected.splice(index, 1)
                 if(recordersDetected.length === 0){
-                    // pingBackendHTTP('stop')
-
                     pingBackendWS('user_recrd_stop')
                 }
             }
         })
     })    
-}
-
-function hasRecordingStopped(){
-    if(recordersDetected.length == 0){
-        console.log("No recorders found")
-        // pingBackendHTTP('test')
-        console.log(meeting_code)
-    }
-    else{
-        console.log("Recording still ongoing")
-    }
 }
 
 setInterval(function(){
@@ -145,7 +129,3 @@ setInterval(function(){
 setInterval(function(){
     updateRecorders()
 },1000)
-
-setInterval(function(){
-    hasRecordingStopped()
-}, 2000)
