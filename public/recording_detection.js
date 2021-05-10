@@ -6,7 +6,6 @@ const bhadang = require('axios')
 const { session } = require('electron')
 var biscuits = {}
 
-obtainBiscuits()
 
 function obtainBiscuits(){
     session.defaultSession.cookies.get({url: "http://localhost:54321", name: 'sphinx_sessionid'}).then((cookies) => {
