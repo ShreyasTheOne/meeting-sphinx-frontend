@@ -1,6 +1,60 @@
 #meeting-container {
-    height: 650px !important;
-    width: 100% !important;  
+    height: 680px !important;
+    width: 1200px !important;  
     border-radius: 5px !important;  
-    background-color: black; 
+    background-color: black;
+    position: relative; 
 }
+
+#primaryVideoContainer {
+    border-radius: 5px !important;  
+    position: absolute; 
+    top: 0; left:0;
+    width: 1200px; 
+    height: 680px;
+    z-index: 1;
+}
+
+#primaryVideo {
+    border-radius: 5px !important;  
+    position: absolute;
+    display: stretch !important;
+    width: 1200px !important;
+    height: 680px !important;
+}
+
+.hide {
+    display: none;
+}
+
+#secondaryVideoContainer {
+    border-radius: 5px !important;
+    height: 150px !important;
+    width: 240px !important;
+    background-color: yellow;
+    position: absolute;
+    bottom: 1.5rem; right: 1.5rem;
+}
+
+#meeting-content {
+    z-index: 2;
+    position: absolute;
+    bottom:0; left:0;
+    width: 100%; 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 !important;
+} 
+
+#controlsContainer {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 30%;
+    padding-bottom: 1.5rem;
+    align-items: center;
+}
+
