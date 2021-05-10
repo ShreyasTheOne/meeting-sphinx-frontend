@@ -31,7 +31,6 @@ class Home extends Component {
         }
     }
 
-
     joinMeeting = () => {
         const { meeting_code } = this.state
         axios({
@@ -151,7 +150,7 @@ class Home extends Component {
 
         return (
             <div id='home-container'>
-                <NavBar/>
+                <NavBar show_button={false}/>
                 <div id='home-content-container'>
                     <div id='home-content'>
                         <div id='home-title'>
@@ -224,7 +223,7 @@ class Home extends Component {
                             inverted
                             onClick={() => this.createMeeting(false)}
                         >
-                            Generate Sphinx Meeting Link
+                            Generate Sphinx Video Conference Link
                         </Button>
                         <Divider horizontal>Or</Divider>
                         <Input
@@ -275,9 +274,10 @@ class Home extends Component {
                                 meeting_code: d.value, 
                                 joinModalInputError: false
                             })}
+                            id='join-code-input'
                             size='big'
                             fluid
-                            placeholder='Enter a custom meeting link...'
+                            placeholder='Enter meeting code'
                         />
                         {joinModalInputError && 
                             <Message

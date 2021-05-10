@@ -5,13 +5,16 @@ import {
     Popup,
     Icon,
     Header,
-    Divider
+    Divider,
+    Modal
 } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import './css/index.css'
 import {
     logoutUser
 } from '../../actions/user'
+import { routeHome } from '../../urls'
+import { toTitleCase } from '../../utils'
 
 class NavBar extends Component {
 
@@ -19,7 +22,6 @@ class NavBar extends Component {
         super(props)
         this.state = {
             now: new Date().toLocaleString(),
-            num_meetings: 0
         }
     }
 
@@ -36,23 +38,32 @@ class NavBar extends Component {
             }, 1000
         )
     }
+    
+    goBackHome = () => {
+        window.location = routeHome()
+    }
 
-    toTitleCase (input) {
-        if (!input) return ''
-        let words = input.split(' ');  
-        let ans = [];  
-        words.forEach(element => {  
-            ans.push(element[0].toUpperCase() + element.slice(1, element.length).toLowerCase());  
-        });  
-        return ans.join(' '); 
+    leaveMeeting = () => {
+        const { UserInformation, MeetingInformation } = this.props
+        const user = UserInformation.data
+        const { organisers } = MeetingInformation
+        for (let i=0; i<organisers.length; i++) {
+            if (organisers[i].id === user.id) {
+                this.setState({
+                    confirmLeaveModalOpen: true
+                })
+                return
+            }
+        }
+
+        this.goBackHome()
     }
 
     render () {
-        const { UserInformation } = this.props
+        const { UserInformation, show_button } = this.props
         const user = UserInformation.data
-        const { now, num_meetings } = this.state
+        const { now } = this.state
         return (
-            <span>
             <div id='home-nav'>
                 <div id='home-nav-left'>
                     <div>
@@ -82,31 +93,68 @@ class NavBar extends Component {
                         </Popup>
                     </div>
                     <Header id='home-header' size='huge'>
-                        Hi, {this.toTitleCase(user.full_name)}!
+                        Hi, {toTitleCase(user.full_name)}!
                     </Header>
                 </div>
                 <div id='home-nav-right'>
-                    <Button
-                        color='red'
-                        id='home-num-meetings'
-                        size='large'
-                    >
-                        {num_meetings} ongoing meetings
-                    </Button>
+                    {
+                        show_button &&
+                            <Button
+                                color='red'
+                                id='home-num-meetings'
+                                size='large'
+                                onClick={this.leaveMeeting.bind(this)}
+                            >
+                                Leave Meeeting
+                            </Button>
+                    }
                     <Header id='home-time' size='huge'>
                         {now}
                     </Header>
                 </div>
+                <Modal
+                    basic
+                    onClose={() => this.setState({confirmLeaveModalOpen: false})}
+                    open={this.state.confirmLeaveModalOpen}
+                    size='small'
+                >
+                    <Header icon>
+                        <Icon name='trash alternate outline' />
+                        Leave Meeting?
+                    </Header>
+                    <Modal.Content>
+                        <p>
+                        You are the organiser of this meeting. If you leave, the meeting will end.
+                        Are you sure you want to leave?
+                        </p>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button 
+                            basic 
+                            color='red' 
+                            inverted 
+                            onClick={() => this.setState({confirmLeaveModalOpen: false})}
+                        >
+                            <Icon name='remove' /> No
+                        </Button>
+                        <Button 
+                            color='green' 
+                            inverted 
+                            onClick={() => this.goBackHome()}
+                        >
+                            <Icon name='checkmark' /> Yes
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
             </div>
-            <Divider/>
-            </span>
         )
     }
 }
 
 const mapStateToProps = state => {
     return {
-        UserInformation: state.userInformation
+        UserInformation: state.userInformation,
+        MeetingInformation: state.meetingInformation,  
     }
 }
 

@@ -1,4 +1,5 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, shell} = require('electron')
+require("./recording_detection")
 
 function createWindow () {
     const mainWindow = new BrowserWindow({
@@ -11,10 +12,12 @@ function createWindow () {
     mainWindow.removeMenu()
     mainWindow.loadURL(
         "http://localhost:3000/"
-        )
-    
-    // createWindow()
-}
+    )
+    mainWindow.webContents.on('new-window', function(e, url) {
+        e.preventDefault();
+        shell.openExternal(url);
+    })
+} 
 
 function init () {
     createWindow()
