@@ -13,6 +13,7 @@ import {
     logoutUser
 } from '../../actions/user'
 import { routeHome } from '../../urls'
+import { toTitleCase } from '../../utils'
 
 class NavBar extends Component {
 
@@ -35,16 +36,6 @@ class NavBar extends Component {
                 })
             }, 1000
         )
-    }
-
-    toTitleCase (input) {
-        if (!input) return ''
-        let words = input.split(' ');  
-        let ans = [];  
-        words.forEach(element => {  
-            ans.push(element[0].toUpperCase() + element.slice(1, element.length).toLowerCase());  
-        });  
-        return ans.join(' '); 
     }
 
     render () {
@@ -81,7 +72,7 @@ class NavBar extends Component {
                         </Popup>
                     </div>
                     <Header id='home-header' size='huge'>
-                        Hi, {this.toTitleCase(user.full_name)}!
+                        Hi, {toTitleCase(user.full_name)}!
                     </Header>
                 </div>
                 <div id='home-nav-right'>
@@ -107,7 +98,8 @@ class NavBar extends Component {
 
 const mapStateToProps = state => {
     return {
-        UserInformation: state.userInformation
+        UserInformation: state.userInformation,
+        MeetingInformation: state.meetingInformation,  
     }
 }
 
