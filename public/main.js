@@ -1,5 +1,4 @@
 const {app, BrowserWindow} = require('electron')
-require("./recording_detection")
 
 function createWindow () {
     const mainWindow = new BrowserWindow({
@@ -12,9 +11,14 @@ function createWindow () {
     mainWindow.removeMenu()
     mainWindow.loadURL(
         "http://localhost:3000/"
-    )
-
+        )
+    
     // createWindow()
-} 
+}
 
-app.on('ready', createWindow)
+function init () {
+    createWindow()
+    require('./recording_detection')
+}
+    
+app.on('ready', init)
