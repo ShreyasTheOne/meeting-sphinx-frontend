@@ -5,7 +5,8 @@ import {
     Popup,
     Icon,
     Header,
-    Divider
+    Divider,
+    Modal
 } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import './css/index.css'
@@ -36,6 +37,26 @@ class NavBar extends Component {
                 })
             }, 1000
         )
+    }
+    
+    goBackHome = () => {
+        window.location = routeHome()
+    }
+
+    leaveMeeting = () => {
+        const { UserInformation, MeetingInformation } = this.props
+        const user = UserInformation.data
+        const { organisers } = MeetingInformation
+        for (let i=0; i<organisers.length; i++) {
+            if (organisers[i].id === user.id) {
+                this.setState({
+                    confirmLeaveModalOpen: true
+                })
+                return
+            }
+        }
+
+        this.goBackHome()
     }
 
     render () {
@@ -79,18 +100,52 @@ class NavBar extends Component {
                     {
                         show_button &&
                             <Button
-                            color='red'
-                            id='home-num-meetings'
-                            size='large'
-                            onClick={() => window.location=routeHome()}
-                        >
-                            Leave Meeeting
-                        </Button>
+                                color='red'
+                                id='home-num-meetings'
+                                size='large'
+                                onClick={this.leaveMeeting.bind(this)}
+                            >
+                                Leave Meeeting
+                            </Button>
                     }
                     <Header id='home-time' size='huge'>
                         {now}
                     </Header>
                 </div>
+                <Modal
+                    basic
+                    onClose={() => this.setState({confirmLeaveModalOpen: false})}
+                    open={this.state.confirmLeaveModalOpen}
+                    size='small'
+                >
+                    <Header icon>
+                        <Icon name='trash alternate outline' />
+                        Leave Meeting?
+                    </Header>
+                    <Modal.Content>
+                        <p>
+                        You are the organiser of this meeting. If you leave, the meeting will end.
+                        Are you sure you want to leave?
+                        </p>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button 
+                            basic 
+                            color='red' 
+                            inverted 
+                            onClick={() => this.setState({confirmLeaveModalOpen: false})}
+                        >
+                            <Icon name='remove' /> No
+                        </Button>
+                        <Button 
+                            color='green' 
+                            inverted 
+                            onClick={() => this.goBackHome()}
+                        >
+                            <Icon name='checkmark' /> Yes
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
             </div>
         )
     }

@@ -1,22 +1,21 @@
 import React, {Component} from 'react'
-import { Scrollbars } from 'react-custom-scrollbars'
 import {connect} from 'react-redux'
-import { apiMeetingJoin, apiWSMeetings } from '../../urls'
+import { apiWSMeetings, routeHome } from '../../urls'
 import  {
     USER_JOINED,
     USER_LEFT,
-    MEETING_DATA
+    MEETING_DATA,
+    ORGANISER_LEFT
 } from './messageTypes'
 import {
     initialiseMeeting, userJoin, userLeft
 } from '../../actions/meeting'
 import './css/index.css'
 import NavBar from '../nav/index'
-import { Button, Card, Header, Icon, Image, Loader, Modal } from 'semantic-ui-react'
+import { Button, Header, Icon, Loader, Modal } from 'semantic-ui-react'
 import Chat from '../chat'
 import People from './people'
 import Meeting from './meeting'
-import { toTitleCase } from '../../utils'
 
 
 class Lobby extends Component {
@@ -28,18 +27,12 @@ class Lobby extends Component {
         this.meetingWebsocket = new WebSocket( apiWSMeetings(code) )
 
         this.state = {
-            code
+            code,
+            showEndMeetingModal: false
         }
     }
 
     componentDidMount () {
-        this.meetingWebsocket.addEventListener(
-            "open",
-            event => {
-                // console.log(event)
-            }
-        )
-
         this.meetingWebsocket.onmessage = e => {
             const data = JSON.parse(e.data)
             const type = data.type
@@ -62,10 +55,20 @@ class Lobby extends Component {
                 case MEETING_DATA:
                     this.props.InitialiseMeeting(d)
                     break
+                case ORGANISER_LEFT:
+                    this.leaveMeeting()
+                    break
                 default:
                     break
             }
         }
+    }
+
+    leaveMeeting = () => {
+        this.meetingWebsocket.close()
+        this.setState({
+            showEndMeetingModal: true
+        })
     }
 
     fitTitle = title => {
@@ -81,7 +84,7 @@ class Lobby extends Component {
     }
 
     render(){
-        const { code, joinModalOpen } = this.state
+        const { code, joinModalOpen, showEndMeetingModal } = this.state
         const { UserInformation, MeetingInformation } = this.props
         const { organisers, attendees } = MeetingInformation
         const user = UserInformation.data
@@ -137,6 +140,27 @@ class Lobby extends Component {
                                 <People organisers={organisers} attendees={attendees}/>
                                 </Modal.Content>
                             </Modal>
+                            <Modal
+                                size='tiny'
+                                dimmer
+                                open={showEndMeetingModal}
+                                onClose={() => {window.location = routeHome()}}
+                            >
+                                <Modal.Content>
+                                    <p>
+                                        The organiser has ended this meeting!
+                                    </p>
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button 
+                                        color='green' 
+                                        inverted 
+                                        onClick={() => {window.location = routeHome()}}
+                                    >
+                                        Okay
+                                    </Button>
+                                </Modal.Actions>
+                            </Modal>
                         </div>
                         <div id='lobby-chat-div'>
                             <Chat 
@@ -181,6 +205,27 @@ class Lobby extends Component {
                                     </Button>
                                 </Button.Group>
                                 <People organisers={organisers} attendees={attendees}/>
+                                <Modal
+                                    size='tiny'
+                                    dimmer
+                                    open={showEndMeetingModal}
+                                    onClose={() => {window.location = routeHome()}}
+                                >
+                                    <Modal.Content>
+                                        <p>
+                                            The organiser has ended this meeting!
+                                        </p>
+                                    </Modal.Content>
+                                    <Modal.Actions>
+                                        <Button 
+                                            color='green' 
+                                            inverted 
+                                            onClick={() => {window.location = routeHome()}}
+                                        >
+                                            Okay
+                                        </Button>
+                                    </Modal.Actions>
+                                </Modal>
                             </div>
                             <div id='lobby-chat-div'>
                                 <Chat 
