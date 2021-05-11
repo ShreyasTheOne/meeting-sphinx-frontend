@@ -17,6 +17,7 @@ function createWindow () {
         e.preventDefault();
         shell.openExternal(url);
     })
+    // mainWindow.webContents.openDevTools()
 } 
 
 // function init () {

@@ -5,6 +5,7 @@ import './css/index.css'
 import { Button, Icon } from 'semantic-ui-react'
 
 
+
 class Meeting extends Component{
 
     constructor(props){
@@ -14,7 +15,6 @@ class Meeting extends Component{
             partnerVideo: null,
             audioOn: false,
             videoOn: false,
-            screenShare: false,
         }
         this.primaryVideoRef = React.createRef()
         this.secondaryVideoRef = React.createRef()
@@ -29,11 +29,6 @@ class Meeting extends Component{
                 icon: "video",
                 action: this.myVideo
             },
-            {
-                key: "sreenshare",
-                icon: "desktop",
-                action: this.myDisplay
-            },
         ]
     }
 
@@ -41,26 +36,6 @@ class Meeting extends Component{
 
     }
     
-    toggleAudio(){
-        this.setState({
-            audioOn: !this.state.audioOn,
-        })
-        return this.state.audioOn
-    }
-
-    toggleVideo(){
-        this.setState({
-            videoOn: !this.state.videoOn,
-        })
-        return this.state.videoOn
-    }
-
-    toggleShare(){
-        this.setState({
-            screenShare: !this.state.screenShare,
-        })
-        return this.state.screenShare
-    }
 
     myAudio () {
 
@@ -91,33 +66,12 @@ class Meeting extends Component{
         }      
         
     }
+    
 
-    myDisplay () {
-
-        if(!this.state.screenShare){
-            navigator.mediaDevices.getDisplayMedia({video:true, audio:false}).then(
-                stream => {
-                    if(this.primaryVideoRef.current){
-                        this.primaryVideoRef.current.srcObject = stream
-                    }
-                    this.setState({
-                        screenShare: true
-                    })
-                },
-                
-                
-            ).catch(err=>alert("Holaaaaa",err))
-        }
-        else{
-            this.setState({
-                screenShare: false
-            })
-            this.primaryVideoRef.current.srcObject = null
-        }
-    }
     render(){
         const {primaryVideo, partnerVideo, videoOn, audioOn, screenShare} = this.state
         const conditions = [ audioOn, videoOn, screenShare ]
+        
         return(
             <div id='meeting-container'>
                 <div id="primaryVideoContainer">
