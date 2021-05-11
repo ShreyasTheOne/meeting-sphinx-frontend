@@ -5,6 +5,7 @@ import './css/index.css'
 import { Button, Icon } from 'semantic-ui-react'
 
 
+
 class Meeting extends Component{
 
     constructor(props){
