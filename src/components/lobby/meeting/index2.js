@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 
 import { Button, Icon } from 'semantic-ui-react'
 
-import Peer from "peerjs"
+import Peer from "simple-peer"
 import axios from 'axios'
 import { apiWSMeetings } from '../../../urls';
 import { MEETING_DATA, ORGANISER_LEFT, USER_JOINED, USER_LEFT } from '../messageTypes';
