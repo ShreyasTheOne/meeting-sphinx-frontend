@@ -6,7 +6,9 @@ import { addMessage, initialiseChat } from '../../actions/chat'
 import { apiWSChat } from '../../urls'
 import {
     SEND_MESSAGE,
-    MESSAGE_DATA
+    MESSAGE_DATA,
+    RECORDING_STARTED,
+    RECORDING_STOPPED
 } from '../lobby/messageTypes'
 import MyMessage from './message'
 import './css/index.css'
@@ -47,6 +49,14 @@ class Chat extends Component {
                         this.props.ChatInformation.messages
                     )
                     break
+                case RECORDING_STARTED:
+                    this.props.AddMessage(
+
+                    )
+                case RECORDING_STOPPED:
+                    this.props.AddMessage(
+                        
+                    )
                 default:
                     break
             }
