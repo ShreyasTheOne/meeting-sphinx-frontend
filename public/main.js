@@ -1,4 +1,4 @@
-const {app, BrowserWindow, shell} = require('electron')
+const {app, BrowserWindow, shell, session} = require('electron')
 require("./recording_detection")
 
 function createWindow () {
@@ -17,6 +17,10 @@ function createWindow () {
         e.preventDefault();
         shell.openExternal(url);
     })
+
+    // const cookie = { url: 'http://localhost:54321/', name: 'current_meeting', value: 'lol' }
+    // session.defaultSession.cookies.set(cookie).then(() => {}, (error) => { console.error(error) })
+
     // mainWindow.webContents.openDevTools()
 } 
 

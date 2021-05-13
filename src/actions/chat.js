@@ -24,3 +24,18 @@ export const addMessage = (new_message, messages) => {
         })
     }
 }
+
+export const addRecMessage = (new_message, messages, type) => {
+    return dispatch => {
+        let new_message_append = {
+            'type': `rec_${type}`,
+            'message': new_message
+        }
+
+        messages.push(new_message_append)
+        dispatch({
+            type: ADD_MESSAGE,
+            payload: {messages}
+        })
+    }
+}
