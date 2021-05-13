@@ -190,7 +190,7 @@ class Lobby extends Component {
                                     <Button
                                         color='black'
                                         as={'a'}
-                                        href={"https://meet.google.com/pbg-gjpu-xhp?authuser=1"}
+                                        href={MeetingInformation.info.meeting_link}
                                         target='_blank'
                                     >
                                         Join Video Conference
