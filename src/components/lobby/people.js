@@ -57,24 +57,27 @@ class People extends Component {
                 <Card.Group itemsPerRow={3}>
                     {
                         attendees.map((p, index) => {
-                            return (
-                                <Card
-                                    key={index}
-                                    color={'blue'}
-                                    fluid
-                                >
-                                    <Card.Content>
-                                        <div className='lobby-person-card'>
-                                            <Image className='lobby-ppp' circular size={"mini"} src={p['profile_picture']}/>
-                                            <span
-                                                className='lobby-pfn'
-                                            >
-                                                {this.toTitleCase(p['full_name'])}
-                                            </span>
-                                        </div>
-                                    </Card.Content>
-                                </Card>
-                            )
+                            if(p['full_name'] != undefined){
+                                console.log(p['full_name'])
+                                return (
+                                    <Card
+                                        key={index}
+                                        color={'blue'}
+                                        fluid
+                                    >
+                                        <Card.Content>
+                                            <div className='lobby-person-card'>
+                                                <Image className='lobby-ppp' circular size={"mini"} src={p['profile_picture']}/>
+                                                <span
+                                                    className='lobby-pfn'
+                                                >
+                                                    {this.toTitleCase(p['full_name'])}
+                                                </span>
+                                            </div>
+                                        </Card.Content>
+                                    </Card>
+                                ) 
+                            }                               
                         })
                     }
                 </Card.Group>

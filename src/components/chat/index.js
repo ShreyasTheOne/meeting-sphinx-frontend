@@ -113,7 +113,11 @@ class Chat extends Component {
                             messages.map((m, index) => {
                                 let again = false, self = false
                                 if (m.type == 'chat') {
-                                    if (index>0 && messages[index-1].message.sender.id === messages[index].message.sender.id) {
+                                    if (
+                                        index>0 && 
+                                        messages[index-1].message.sender && 
+                                        messages[index-1].message.sender.id === messages[index].message.sender.id
+                                    ) {
                                         again = "true"
                                     } else {
                                         again = "false"
