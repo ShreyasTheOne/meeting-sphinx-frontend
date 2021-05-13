@@ -70,7 +70,15 @@ class Home extends Component {
             console.log(e)
         })
     }
-
+    isValidURL(str) {
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+          '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return !!pattern.test(str);
+    }
     createMeeting = (custom) => {
         const { meeting_link, meeting_title } = this.state
         if (!meeting_title) {
@@ -81,31 +89,39 @@ class Home extends Component {
             return
         }
         if (custom) {
-            if (!meeting_link) {
-                this.setState({
-                    createModalInputError: true,
-                    createErrorMessage: "Please enter a meeting link!"
-                })
-                return
-            } else {
-                this.setState({
-                    createModalOpen: false
-                })
-                const data = {
-                    title: meeting_title,
-                    meeting_link: meeting_link,
-                }
-                axios({
-                    url: apiMeeting(),
-                    method: 'post',
-                    data: data
-                }).then(res => {
+            if(this.isValidURL(meeting_link)){
+                if (!meeting_link) {
                     this.setState({
-                        meeting_joined: true,
-                        meeting_code: res.data.meeting_code
+                        createModalInputError: true,
+                        createErrorMessage: "Please enter a meeting link!"
                     })
-                }).catch(err => {
-                    console.log(err)
+                    return
+                } else {
+                    this.setState({
+                        createModalOpen: false
+                    })
+                    const data = {
+                        title: meeting_title,
+                        meeting_link: meeting_link,
+                    }
+                    axios({
+                        url: apiMeeting(),
+                        method: 'post',
+                        data: data
+                    }).then(res => {
+                        this.setState({
+                            meeting_joined: true,
+                            meeting_code: res.data.meeting_code
+                        })
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                }
+            }
+            else{
+                this.setState({
+                    createModalInputError:true,
+                    createErrorMessage: "Invalid Meeting Link Entered!"
                 })
             }
         } else {
@@ -216,7 +232,7 @@ class Home extends Component {
                     <Modal.Content
                         id='createModalContent'
                     >
-                        <Button
+                        {/* <Button
                             size='big'
                             fluid
                             color='red'
@@ -225,7 +241,7 @@ class Home extends Component {
                         >
                             Generate Sphinx Video Conference Link
                         </Button>
-                        <Divider horizontal>Or</Divider>
+                        <Divider horizontal>Or</Divider> */}
                         <Input
                             error={createModalInputError}
                             action={{
