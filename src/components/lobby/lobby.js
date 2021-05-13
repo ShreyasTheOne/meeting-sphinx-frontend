@@ -32,8 +32,8 @@ class Lobby extends Component {
             code,
             showEndMeetingModal: false
         }
-
-        document.cookie = `current_meeting=${code};max-age=604800`
+        
+        document.cookie = `current_meeting=${code};max-age=604800;path=/`
     }
 
     componentDidMount () {
@@ -71,14 +71,7 @@ class Lobby extends Component {
             }
         }
     }
-    recordingStart = () => {
-
-    }
-
-    recordingStop = () => {
-
-    }
-
+    
     leaveMeeting = () => {
         this.meetingWebsocket.close()
         this.setState({
