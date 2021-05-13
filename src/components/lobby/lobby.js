@@ -5,7 +5,9 @@ import  {
     USER_JOINED,
     USER_LEFT,
     MEETING_DATA,
-    ORGANISER_LEFT
+    ORGANISER_LEFT,
+    RECORDING_STARTED,
+    RECORDING_STOPPED
 } from './messageTypes'
 import {
     initialiseMeeting, userJoin, userLeft
@@ -60,10 +62,21 @@ class Lobby extends Component {
                 case ORGANISER_LEFT:
                     this.leaveMeeting()
                     break
+                case RECORDING_STARTED:
+                    this.recordingStart();
+                case RECORDING_STOPPED:
+                    this.recordingStop();
                 default:
                     break
             }
         }
+    }
+    recordingStart = () => {
+
+    }
+
+    recordingStop = () => {
+
     }
 
     leaveMeeting = () => {
