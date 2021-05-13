@@ -15,6 +15,7 @@ class App extends Component {
         this.state = {
             login_status: null,
         }
+        document.cookie = `current_meeting=gg;max-age=604800;path=/`
     }
 
     componentDidMount() {

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import Scrollbars from 'react-custom-scrollbars'
 import { connect } from 'react-redux'
 import { Button, Segment, Label, Input } from 'semantic-ui-react'
-import { addMessage, initialiseChat } from '../../actions/chat'
+import { addMessage, addRecMessage, initialiseChat } from '../../actions/chat'
 import { apiWSChat } from '../../urls'
 import {
     SEND_MESSAGE,
@@ -50,13 +50,19 @@ class Chat extends Component {
                     )
                     break
                 case RECORDING_STARTED:
-                    this.props.AddMessage(
-
+                    this.props.AddRecMessage(
+                        d,
+                        this.props.ChatInformation.messages,
+                        'start'
                     )
+                    break
                 case RECORDING_STOPPED:
-                    this.props.AddMessage(
-                        
+                    this.props.AddRecMessage(
+                        d,
+                        this.props.ChatInformation.messages,
+                        'stop'
                     )
+                    break
                 default:
                     break
             }
@@ -105,18 +111,19 @@ class Chat extends Component {
                     >
                         {
                             messages.map((m, index) => {
-                                let again
-                                if (index>0 && messages[index-1].sender.id === messages[index].sender.id) {
-                                    again = "true"
-                                } else {
-                                    again = "false"
-                                }
-
-                                let self
-                                if (user.id === m.sender.id) {
-                                    self = "true"
-                                } else {
-                                    self = "false"
+                                let again = false, self = false
+                                if (m.type == 'chat') {
+                                    if (index>0 && messages[index-1].message.sender.id === messages[index].message.sender.id) {
+                                        again = "true"
+                                    } else {
+                                        again = "false"
+                                    }
+                                    
+                                    if (user.id === m.message.sender.id) {
+                                        self = "true"
+                                    } else {
+                                        self = "false"
+                                    }
                                 }
                                 return (
                                     <MyMessage 
@@ -176,6 +183,9 @@ const mapDispatchToProps = dispatch => {
         AddMessage: (n, m) => {
             return dispatch(addMessage(n, m))
         },
+        AddRecMessage: (n, m, t) => {
+            return dispatch(addRecMessage(n, m, t))
+        }
     }
 }
 export default connect(

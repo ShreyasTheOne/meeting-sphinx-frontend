@@ -31,6 +31,38 @@ class Home extends Component {
         }
     }
 
+    componentDidUpdate () {
+        const d = document.getElementById("join-code-input")
+        const f = document.getElementById("create-title-input")
+        const g = document.getElementById("meeting-link-input")
+        
+        if (d) {
+            d.focus()
+            d.addEventListener("keyup",  (e) => {
+                if(e.key === "Enter"){
+                    this.joinMeeting()
+                }
+            })
+        }
+        if (f) {
+            if (document.activeElement != g) f.focus()
+            f.addEventListener("keyup",  (e) => {
+                if(e.key === "Enter"){
+                    this.createMeeting(true)
+                }
+            })
+        }
+        if (g) {
+            g.addEventListener("keyup",  (e) => {
+                if(e.key === "Enter"){
+                    this.createMeeting(true)
+                }
+            })
+        }
+        
+
+    }
+
     joinMeeting = () => {
         const { meeting_code } = this.state
         axios({
@@ -223,6 +255,7 @@ class Home extends Component {
                 >
                     <Modal.Header>
                         <Input
+                            id='create-title-input'
                             placeholder='Enter title of meeting'
                             transparent
                             fluid
@@ -252,6 +285,7 @@ class Home extends Component {
                             onChange={(e, d) => this.setState({meeting_link: d.value})}
                             size='big'
                             fluid
+                            id='meeting-link-input'
                             placeholder='Enter a custom meeting link...'
                         />
                         {createModalInputError && 

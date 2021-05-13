@@ -5,10 +5,10 @@ let standardRecorders =['obs-ffmpeg-mux',]
 const bhadang = require('axios')
 const { session } = require('electron')
 const WebSocket = require('ws')
-var biscuits = {}
+var biscuits = []
 
-const apiWSMeetings = (code) => {
-    return `ws://localhost:54321/ws/meetings/${code}/`
+const apiWSChat = (meeting_code) => {
+    return `ws://localhost:54321/ws/meetings/${meeting_code}/chat/`
 }
 
 var meeting_code = ''
@@ -21,10 +21,11 @@ function obtainBiscuits(){
         console.log(err)
     })
 
-    session.defaultSession.cookies.get({name: 'current_meeting'}).then((cookies) => {
-        meeting_codes = cookies
+    session.defaultSession.cookies.get({name: 'current_meeting', path:'/'}).then((cookies) => {
+        let meeting_codes = cookies
         try{
             meeting_code = meeting_codes[0]['value']
+            
         }catch{
             console.log("No cookie set")
         }
@@ -58,25 +59,27 @@ function pingBackendHTTP(where){
 function pingBackendWS(type){
 
     biscuit = ""
+    
     if(biscuits.length == 0){
         console.error("No biscuits found")
         return
     }else biscuit = biscuits[0]['value']
+    
+    if (meeting_code == 'gg') return
 
     const ws = new WebSocket(
-        apiWSMeetings(meeting_code), {
+        apiWSChat(meeting_code), {
             headers: {
                 Cookie: `sphinx_sessionid=${biscuit}`,
             }
         }
     )
     ws.on('open', function open(){
+        console.log("recording", type)
         ws.send(JSON.stringify({
             'type': type
-        }))
-        
+        })) 
     })
-
 }
 
 function checkNewRecorders(){
@@ -87,6 +90,7 @@ function checkNewRecorders(){
                 if(process.name == rec){
                     if(recordersDetected.includes(process.name) == false){
                         recordersDetected.push(process.name)
+                        console.log('user_record_start')
                         pingBackendWS('user_recrd_start')
                     }
                 }
@@ -111,6 +115,7 @@ function updateRecorders(){
                 const index = recordersDetected.indexOf(drec)
                 recordersDetected.splice(index, 1)
                 if(recordersDetected.length === 0){
+                    console.log('user_record_stop')
                     pingBackendWS('user_recrd_stop')
                 }
             }
@@ -122,10 +127,15 @@ setInterval(function(){
     obtainBiscuits()
 }, 1000)
 
-setInterval(function(){
-    checkNewRecorders()
-},500)
-
-setInterval(function(){
-    updateRecorders()
-},1000)
+setTimeout(
+    function() {
+        setInterval(function(){
+            checkNewRecorders()
+        },500)
+        
+        setInterval(function(){
+            updateRecorders()
+        },1000)
+    },
+    2000
+)

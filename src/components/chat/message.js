@@ -12,45 +12,88 @@ class MyMessage extends Component {
 
     render () {
         const { m, again, self } = this.props
-        const { creation_time, sender, content } = m
-        const who = self === "true" ? 'self' : 'else'
-        const showProfileInfo = again === "true" ? false : true
-        return (
-            <>
-                {
-                    showProfileInfo &&
-                    <div className='message-user-info'>
-                        <div>
-                            <Image
-                                style={{ cursor: 'pointer' }}
-                                src={sender.profile_picture}
-                                avatar
-                                size='mini'
-                            />
+        
+        const { type, message } = m
+        if (type === 'chat') {
+            const { creation_time, sender, content } = message
+            const who = self === "true" ? 'self' : 'else'
+            const showProfileInfo = again === "true" ? false : true
+            return (
+                <>
+                    {
+                        showProfileInfo &&
+                        <div className='message-user-info'>
+                            <div>
+                                <Image
+                                    style={{ cursor: 'pointer' }}
+                                    src={sender.profile_picture}
+                                    avatar
+                                    size='mini'
+                                />
+                            </div>
+                            <div
+                                className='message-user-name' 
+                            >
+                                {toTitleCase(sender.full_name)}
+                            </div>
+                        </div>
+                    }
+                    <div
+                        className={`message-${who}`}
+                    >
+                        <div 
+                            className={'message-content'}
+                        >
+                            {content}
                         </div>
                         <div
-                            className='message-user-name' 
+                            className={'message-time'}
                         >
-                            {toTitleCase(sender.full_name)}
+                            {moment(creation_time).format('LT')}
                         </div>
                     </div>
-                }
-                <div
-                    className={`message-${who}`}
-                >
-                    <div 
-                        className={'message-content'}
-                    >
-                        {content}
-                    </div>
+                </>
+            )
+        } else {
+            console.log("type", type)
+            const sender = message
+            console.log(sender)
+            return (
+                <>
                     <div
-                        className={'message-time'}
+                        className={`recording-message ${type}`}
                     >
-                        {moment(creation_time).format('LT')}
+                        <div className='message-user-info'>
+                            <div>
+                                <Image
+                                    style={{ cursor: 'pointer' }}
+                                    src={sender.profile_picture}
+                                    avatar
+                                    size='mini'
+                                />
+                            </div>
+                            <div
+                                className='message-user-name' 
+                            >
+                                {toTitleCase(sender.full_name)}
+                            </div>
+                        </div>
+                        <div 
+                            className={'message-content'}
+                        >
+                            {type === 'rec_start' && 'Started recording'}
+                            {type === 'rec_stop' && 'Stopped recording'}
+                        </div>
+                        <div
+                            className={'message-time'}
+                        >
+                            {moment(new Date()).format('LT')}
+                        </div>
                     </div>
-                </div>
-            </>
-        )
+                </>
+            )
+        }
+        
     }
 }
 

@@ -51,3 +51,28 @@
     margin-left: 0.5rem;
     font-size: 1.3rem;
 }
+
+.recording-message {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    max-width: calc(100% - 6rem);
+    overflow-wrap: normal ;
+    align-self: center !important;
+
+    margin-bottom: 1.5rem;
+    margin-left: 3rem;
+    margin-right: 3rem;
+    padding: 1rem !important;
+    border-radius: 20px;
+}
+
+.rec_start {
+    color: black;
+    background-color: #73D2DE;
+}
+
+.rec_stop {
+    color: black;
+    background-color:#A5243D;
+}
