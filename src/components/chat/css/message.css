@@ -39,7 +39,6 @@
     flex-direction: row;
     align-items: center;
     padding-left: 1rem;
-    padding-top: 1rem;
     margin-bottom: 1rem !important;
     margin-top: 1rem !important;
 }
@@ -60,9 +59,10 @@
     overflow-wrap: normal ;
     align-self: center !important;
 
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     margin-left: 3rem;
     margin-right: 3rem;
+    margin-top: 2rem !important;
     padding: 1rem !important;
     border-radius: 20px;
 }
