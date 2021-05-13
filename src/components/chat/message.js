@@ -12,7 +12,7 @@ class MyMessage extends Component {
 
     render () {
         const { m, again, self } = this.props
-        
+
         const { type, message } = m
         if (type === 'chat') {
             const { creation_time, sender, content } = message

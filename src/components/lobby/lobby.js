@@ -239,6 +239,7 @@ class Lobby extends Component {
                                 <Chat 
                                     meetingCode={MeetingInformation.info.meeting_code}
                                     user={user}
+                                    attendees={attendees}
                                 />
                             </div>
                         </div>

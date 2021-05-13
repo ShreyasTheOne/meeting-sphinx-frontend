@@ -66,7 +66,7 @@ class People extends Component {
                                         fluid
                                     >
                                         <Card.Content>
-                                            <div className='lobby-person-card'>
+                                            <div className='lobby-person-card' id={"attendee"+`${p['id']}`}>
                                                 <Image className='lobby-ppp' circular size={"mini"} src={p['profile_picture']}/>
                                                 <span
                                                     className='lobby-pfn'
