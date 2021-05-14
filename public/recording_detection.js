@@ -1,6 +1,6 @@
 let psList
 let recordersDetected = []
-let standardRecorders =['obs-ffmpeg-mux',]
+let standardRecorders =['obs-ffmpeg-mux', 'kazam', 'peek', 'simplescreenrec', ]
 
 const bhadang = require('axios')
 const { session } = require('electron')
