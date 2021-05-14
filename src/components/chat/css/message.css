@@ -66,7 +66,12 @@
     padding: 1rem !important;
     border-radius: 20px;
 }
-
+.recording-true {
+    background-color: red !important;
+}
+.recording-false {
+    background-color: white !important;
+}
 .rec_start {
     color: black;
     background-color: #73D2DE;

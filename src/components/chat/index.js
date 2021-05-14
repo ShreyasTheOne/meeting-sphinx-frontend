@@ -135,7 +135,6 @@ class Chat extends Component {
                                         m={m}
                                         again={again}
                                         self={self}
-                                        attendees={this.props.attendees}
                                     />
                                 )
                             })
