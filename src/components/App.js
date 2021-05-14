@@ -7,6 +7,7 @@ import OnLogin from './login/on_login'
 import Lobby from './lobby/lobby'
 import Home from './home/index'
 import { verifyUser } from '../actions/user'
+import Dashboard from "./dashboard";
 
 class App extends Component {
 
@@ -59,6 +60,11 @@ class App extends Component {
                             exact
                             path={`${match.path}lobby/:code/`}
                             component={Lobby}
+                        />
+                        <Route
+                            exact
+                            path={`${match.path}dashboard/`}
+                            component={Dashboard}
                         />
                         <Redirect to=''/>
                     </Switch>

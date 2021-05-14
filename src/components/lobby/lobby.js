@@ -96,7 +96,7 @@ class Lobby extends Component {
         const { UserInformation, MeetingInformation } = this.props
         const { organisers, attendees, recording } = MeetingInformation
         const user = UserInformation.data
-        
+        console.log("recording", recording)
         if (MeetingInformation.loaded === false) {
             return (
                 <Loader active />

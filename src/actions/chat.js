@@ -1,4 +1,4 @@
-import { ADD_MESSAGE, INITIALISE_CHAT, UPDATE_RECORDER_TRUE, UPDATE_RECORDER_FALSE } from './types'
+import { ADD_MESSAGE, INITIALISE_CHAT, UPDATE_RECORDER } from './types'
 
 
 export const initialiseChat = (messages) => {
@@ -38,17 +38,12 @@ export const addRecMessage = (new_message, messages, type) => {
             payload: {messages}
         })
 
-        if(type == "start"){
-            dispatch({
-                type: UPDATE_RECORDER_TRUE,
-                payload: new_message.id,
-            })
-        }
-        else{
-            dispatch({
-                type: UPDATE_RECORDER_FALSE,
-                payload: new_message.id,
-            })            
-        }
+        dispatch({
+            type: UPDATE_RECORDER,
+            payload: {
+                user_id: new_message.user.id,
+                rec_state: type === "start"
+            },
+        })
     }
 }

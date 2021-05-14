@@ -14,10 +14,11 @@ class MyMessage extends Component {
         const { m, again, self } = this.props
 
         const { type, message } = m
+        console.log(m)
         if (type === 'chat') {
             const { creation_time, sender, content } = message
             const who = self === "true" ? 'self' : 'else'
-            const showProfileInfo = again === "true" ? false : true
+            const showProfileInfo = again !== "true"
             return (
                 <>
                     {
@@ -55,9 +56,10 @@ class MyMessage extends Component {
                 </>
             )
         } else {
-            console.log("type", type)
-            const sender = message
-            console.log(sender)
+            const sender = message.user
+            console.log("message", message, sender)
+            const { start_time, end_time } = message
+            const time = type === "rec_start" ? start_time : end_time
             return (
                 <>
                     <div
@@ -87,7 +89,7 @@ class MyMessage extends Component {
                         <div
                             className={'message-time'}
                         >
-                            {moment(new Date()).format('LT')}
+                            {moment(time).format('LT')}
                         </div>
                     </div>
                 </>

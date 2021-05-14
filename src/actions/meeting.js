@@ -19,7 +19,8 @@ export const initialiseMeeting = (meeting_data) => {
                 loading: false,
                 info: meeting_info,
                 organisers: meeting_data['organizers'],
-                attendees: meeting_data['attendees']
+                attendees: meeting_data['attendees'],
+                recording: {}
             }
         })
     }

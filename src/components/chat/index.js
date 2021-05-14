@@ -57,6 +57,7 @@ class Chat extends Component {
                     )
                     break
                 case RECORDING_STOPPED:
+                    console.log(d)
                     this.props.AddRecMessage(
                         d,
                         this.props.ChatInformation.messages,
@@ -83,7 +84,8 @@ class Chat extends Component {
 
         document.getElementById('message-input-box').value=''
         this.setState({
-            sendingMessage: true
+            sendingMessage: true,
+            message: ''
         })
         this.chatWebSocket.send(JSON.stringify(
             {

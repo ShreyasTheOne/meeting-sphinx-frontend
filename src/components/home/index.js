@@ -198,7 +198,7 @@ class Home extends Component {
 
         return (
             <div id='home-container'>
-                <NavBar show_button={false}/>
+                <NavBar show_button={false} dashboard_button={true}/>
                 <div id='home-content-container'>
                     <div id='home-content'>
                         <div id='home-title'>

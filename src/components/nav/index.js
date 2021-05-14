@@ -10,10 +10,11 @@ import {
 } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import './css/index.css'
+import { Redirect } from 'react-router-dom'
 import {
     logoutUser
 } from '../../actions/user'
-import { routeHome } from '../../urls'
+import {routeDashboard, routeHome} from '../../urls'
 import { toTitleCase } from '../../utils'
 
 class NavBar extends Component {
@@ -38,6 +39,12 @@ class NavBar extends Component {
             }, 1000
         )
     }
+
+    redirectToDashboard () {
+       this.setState(({
+           goToDashboard: true
+       }))
+    }
     
     goBackHome = () => {
         window.location = routeHome()
@@ -60,9 +67,16 @@ class NavBar extends Component {
     }
 
     render () {
-        const { UserInformation, show_button } = this.props
+        const { UserInformation, show_button, dashboard_button, home_button } = this.props
         const user = UserInformation.data
         const { now } = this.state
+
+        if (this.state.goToDashboard) {
+            return (
+                <Redirect to={'/dashboard'} />
+            )
+        }
+
         return (
             <div id='home-nav'>
                 <div id='home-nav-left'>
@@ -105,7 +119,29 @@ class NavBar extends Component {
                                 size='large'
                                 onClick={this.leaveMeeting.bind(this)}
                             >
-                                Leave Meeeting
+                                Leave Meeting
+                            </Button>
+                    }
+                    {
+                        dashboard_button &&
+                            <Button
+                                color='black'
+                                id='home-num-meetings'
+                                size='large'
+                                onClick={this.redirectToDashboard.bind(this)}
+                            >
+                                Dashboard
+                            </Button>
+                    }
+                    {
+                        home_button &&
+                            <Button
+                                color='blue'
+                                id='home-num-meetings'
+                                size='large'
+                                onClick={this.goBackHome.bind(this)}
+                            >
+                                Go Home
                             </Button>
                     }
                     <Header id='home-time' size='huge'>

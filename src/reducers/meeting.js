@@ -3,8 +3,7 @@ import {
     INITIALISE_MEETING, 
     UPDATE_ATTENDEES,
     UPDATE_ORGANISERS,
-    UPDATE_RECORDER_TRUE,
-    UPDATE_RECORDER_FALSE,
+    UPDATE_RECORDER,
 } from "../actions/types"
 
 let initialState = {
@@ -38,20 +37,12 @@ const meetingInformation = (state = initialState, action) => {
                 ...state,
                 organisers: action.payload.organisers
             }
-        case UPDATE_RECORDER_TRUE:
-            return{
+        case UPDATE_RECORDER:
+            return {
                 ...state,
                 recording: {
                     ...state.recording,
-                    [action.payload]: `true`,
-                }
-            }
-        case UPDATE_RECORDER_FALSE:
-            return{
-                ...state,
-                recording: {
-                    ...state.recording,
-                    [action.payload]: `false`,
+                    [action.payload.user_id]: action.payload.rec_state,
                 }
             }
         default:
