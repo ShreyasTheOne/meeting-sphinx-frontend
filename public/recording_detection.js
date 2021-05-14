@@ -65,7 +65,6 @@ function pingBackendWS(type){
         return
     }else biscuit = biscuits[0]['value']
     
-    if (meeting_code == 'gg') return
 
     const ws = new WebSocket(
         apiWSChat(meeting_code), {
