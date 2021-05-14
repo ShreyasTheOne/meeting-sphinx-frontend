@@ -94,8 +94,9 @@ class Lobby extends Component {
     render(){
         const { code, joinModalOpen, showEndMeetingModal } = this.state
         const { UserInformation, MeetingInformation } = this.props
-        const { organisers, attendees } = MeetingInformation
+        const { organisers, attendees, recording } = MeetingInformation
         const user = UserInformation.data
+        
         if (MeetingInformation.loaded === false) {
             return (
                 <Loader active />
@@ -145,7 +146,7 @@ class Lobby extends Component {
                                 })}}
                             >
                                 <Modal.Content>
-                                <People organisers={organisers} attendees={attendees}/>
+                                <People organisers={organisers} attendees={attendees} recording={recording}/>
                                 </Modal.Content>
                             </Modal>
                             <Modal
@@ -212,7 +213,7 @@ class Lobby extends Component {
                                         <Icon name='copy' />
                                     </Button>
                                 </Button.Group>
-                                <People organisers={organisers} attendees={attendees}/>
+                                <People organisers={organisers} attendees={attendees} recording={recording}/>
                                 <Modal
                                     size='tiny'
                                     dimmer

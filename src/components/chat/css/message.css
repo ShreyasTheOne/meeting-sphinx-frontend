@@ -40,7 +40,7 @@
     align-items: center;
     padding-left: 1rem;
     margin-bottom: 1rem !important;
-    margin-top: 1rem !important;
+    margin-top: 2rem !important;
 }
 
 .message-user-name {
@@ -66,7 +66,12 @@
     padding: 1rem !important;
     border-radius: 20px;
 }
-
+.recording-true {
+    background-color: red !important;
+}
+.recording-false {
+    background-color: white !important;
+}
 .rec_start {
     color: black;
     background-color: #73D2DE;

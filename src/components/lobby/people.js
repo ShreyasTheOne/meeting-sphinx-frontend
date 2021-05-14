@@ -20,7 +20,7 @@ class People extends Component {
     }
 
     render () {
-        const { organisers, attendees } = this.props
+        const { organisers, attendees, recording } = this.props
         return (
             <Scrollbars style={{ width: 1000, height: 600 }}>
                 <div id='lobby-scrollbars'>
@@ -55,18 +55,25 @@ class People extends Component {
                     Attendees
                 </Header>
                 <Card.Group itemsPerRow={3}>
-                    {
+                    {   
+                       
                         attendees.map((p, index) => {
                             if(p['full_name'] != undefined){
-                                console.log(p['full_name'])
+                                
+                                var rec = `false`
+                                if(recording !== undefined)
+                                    rec = recording[p['id']]
+                                else 
+                                    rec = `false`
+
                                 return (
-                                    <Card
+                                    <Card className={`recording-${rec}`} 
                                         key={index}
-                                        color={'blue'}
+                                        color={`blue`}
                                         fluid
                                     >
                                         <Card.Content>
-                                            <div className='lobby-person-card'>
+                                            <div className={`lobby-person-card`}>
                                                 <Image className='lobby-ppp' circular size={"mini"} src={p['profile_picture']}/>
                                                 <span
                                                     className='lobby-pfn'

@@ -2,7 +2,9 @@ import {
     CHANGE_MEETING_LOADING_LOADED_ERROR, 
     INITIALISE_MEETING, 
     UPDATE_ATTENDEES,
-    UPDATE_ORGANISERS
+    UPDATE_ORGANISERS,
+    UPDATE_RECORDER_TRUE,
+    UPDATE_RECORDER_FALSE,
 } from "../actions/types"
 
 let initialState = {
@@ -11,7 +13,8 @@ let initialState = {
     data: {},
     error: false,
     organisers: [],
-    attendees: []
+    attendees: [],
+    recording: {},
 }
 
 const meetingInformation = (state = initialState, action) => {
@@ -34,6 +37,22 @@ const meetingInformation = (state = initialState, action) => {
             return {
                 ...state,
                 organisers: action.payload.organisers
+            }
+        case UPDATE_RECORDER_TRUE:
+            return{
+                ...state,
+                recording: {
+                    ...state.recording,
+                    [action.payload]: `true`,
+                }
+            }
+        case UPDATE_RECORDER_FALSE:
+            return{
+                ...state,
+                recording: {
+                    ...state.recording,
+                    [action.payload]: `false`,
+                }
             }
         default:
             return state
