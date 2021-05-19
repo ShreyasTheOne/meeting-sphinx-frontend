@@ -7,7 +7,9 @@ import {
     ALL_USERS,
     HEY,
     CALL_ACCEPTED,
-    USER_TURNED_OFF_VIDEO
+    USER_TURNED_OFF_VIDEO,
+    SENDING_SIGNAL,
+    RETURNING_SIGNAL
 } from "../messageTypes"
 import { apiWSVideoCall } from '../../../urls'
 import './css/index.css'
@@ -39,128 +41,83 @@ class Meeting extends Component {
                 return u.id !== user.id
             })
         })
-    }
-
-    handleUserJoined = d => {
-        const user = this.props.UserInformation.data
-        const {
-            myVideoOn,
-            users
-        } = this.state
-        if (d !== user.id) {
-            if (myVideoOn) {
-                this.callUser(d, user.id, this.myStream)
-            }
-            users.push(d)
-            this.setState({
-                users
+        users.forEach(userID => {
+            if (userID === user.id) return
+            const peer = new Peer({
+                initiator: true,
+                trickle: false,
+                stream: null,
             })
-        }
-    }
 
-    handleUserTurnedOffVideo = d => {
-        console.log("destroying accepting peer")
-        this.acceptingPeers[d.user_id].destroy()
-        this.acceptingPeers[d.user_id] = null
-        if (this.primaryVideoRef.current) {
-            this.primaryVideoRef.current.srcObject = null
-        }
-    }
+            peer.on("signal", signal => {
+                this.videoCallWebsocket.send(JSON.stringify({
+                    "type": "sending_signal",
+                    "data": {signal: signal, from: user.id, to: userID}
+                }))
+            })
 
-    // CALLER METHODS
-
-    callUser = (receiver_id, caller_id, stream) => {
-        // this.peer = new Peer({
-        //     initiator: true,
-        //     trickle: false,
-        //     stream
-        // })
-        //
-        // this.peer.on("signal", signal => {
-        //     this.videoCallWebsocket.send(JSON.stringify({
-        //         "type": "call_user",
-        //         "data": {signal, from: caller_id, to: receiver_id}
-        //     }))
-        // })
-        //
-        // this.peer.on("stream", stream => {
-        //     console.log("GETTING STREAM")
-        //     if (this.primaryVideoRef.current) {
-        //         this.primaryVideoRef.current.srcObject = stream
-        //     }
-        // })
-        this.peers[receiver_id] = new Peer({
-            initiator: true,
-            trickle: false,
-            stream
+            peer.on("stream", stream => {
+                console.log("GETTING STREAM")
+                if (this.primaryVideoRef.current) {
+                    this.primaryVideoRef.current.srcObject = stream
+                    // console.log("stream")
+                }
+            })
+            this.peers[userID] = peer
         })
-
-        this.peers[receiver_id].on("signal", signal => {
-            this.videoCallWebsocket.send(JSON.stringify({
-                "type": "call_user",
-                "data": {signal, from: caller_id, to: receiver_id}
-            }))
-        })
-
-        this.peers[receiver_id].on("stream", stream => {
-            console.log("GETTING STREAM")
-            if (this.primaryVideoRef.current) {
-                this.primaryVideoRef.current.srcObject = stream
-            }
-        })
-
     }
 
-    handleCallAccepted = d => {
-        const user = this.props.UserInformation.data
-        if (d.from === user.id) {
-            console.log(this.peers)
-            this.peers[d.to].signal(d.signal)
-        }
-    }
+    // handleUserJoined = users => {
+    //     const user = this.props.UserInformation.data
+    //     this.setState({
+    //         users: users.filter(u => {
+    //             return u.id !== user.id
+    //         })
+    //     })
+    // }
 
-    // RECEIVER METHODS
-
-    handleHey = d => {
+    handleSendingSignal = d => {
         const user = this.props.UserInformation.data
         if (d.to === user.id) {
-            this.acceptCall(d.from, d.signal, d.to)
+            if (!this.acceptingPeers[d.from] || this.acceptingPeers[d.from].destroyed) {
+                console.log("New accepting")
+
+                let temp_users = this.state.users.filter(u => {return u !== d.from})
+                temp_users.push(d.from)
+                this.setState({
+                    users: temp_users
+                })
+
+                const peer = new Peer({
+                    initiator: false,
+                    trickle: false,
+                    stream: null,
+                })
+
+                peer.on("signal", signal => {
+                    this.videoCallWebsocket.send(JSON.stringify({
+                        "type": "returning_signal",
+                        "data": {signal: signal, from: d.from, to: d.to}
+                    }))
+                })
+                peer.on("stream", stream => {
+                    console.log("GETTING STREAM")
+                    if (this.primaryVideoRef.current) {
+                        this.primaryVideoRef.current.srcObject = stream
+                        // console.log("stream")
+                    }
+                })
+                peer.signal(d.signal)
+                this.acceptingPeers[d.from] = peer
+            }
         }
     }
 
-    acceptCall = (caller, caller_signal, receiver) => {
-        this.acceptingPeers[caller] = new Peer({
-            initiator: false,
-            trickle: false,
-            stream: this.myStream,
-        })
-
-        this.acceptingPeers[caller].on("signal", data => {
-            this.videoCallWebsocket.send(JSON.stringify({
-                'type': 'accept_call',
-                'data': {
-                    'signal': data,
-                    'to': receiver,
-                    'from': caller,
-                }
-            }))
-        })
-
-        this.acceptingPeers[caller].on("stream", stream => {
-            console.log("GETTING STREAM")
-            if (this.primaryVideoRef.current) {
-                console.log("Setting incoming stream")
-                // if (!stream) {
-                //     this.primaryVideoRef.current.srcObject = stream
-                // } else {
-                //     alert("Stream coming in is null!")
-                // }
-                console.log("Stream", stream == null, stream)
-                this.primaryVideoRef.current.srcObject = stream
-            }
-        })
-
-        this.acceptingPeers[caller].signal(caller_signal)
+    handleReturningSignal = d => {
+        const user = this.props.UserInformation.data
+        if (d.from === user.id) {
+            this.peers[d.to].signal(d.signal)
+        }
     }
 
     componentDidMount() {
@@ -174,16 +131,13 @@ class Meeting extends Component {
                     this.setUsers(d)
                     break
                 case USER_JOINED:
-                    this.handleUserJoined(d)
+                    // this.handleUserJoined(d)
                     break
-                case HEY:
-                    this.handleHey(d)
+                case SENDING_SIGNAL:
+                    this.handleSendingSignal(d)
                     break
-                case CALL_ACCEPTED:
-                    this.handleCallAccepted(d)
-                    break
-                case USER_TURNED_OFF_VIDEO:
-                    this.handleUserTurnedOffVideo(d)
+                case RETURNING_SIGNAL:
+                    this.handleReturningSignal(d)
                     break
                 default:
                     break
@@ -198,52 +152,52 @@ class Meeting extends Component {
         const user = UserInformation.data
 
         if (curr) {
-            // this.videoCallWebsocket.send(JSON.stringify({
-            //     'type': 'user_turned_off_video',
-            //     'data': {
-            //         'user_id': user.id
-            //     }
-            // }))
 
             for (const [user_id, peer] of Object.entries(this.peers)) {
-                console.log("destroying calling peer")
-                peer.destroy()
-                this.peers[user_id] = null
+                peer.removeStream(this.myStream)
             }
+            for (const [user_id, peer] of Object.entries(this.acceptingPeers)) {
+                peer.removeStream(this.myStream)
+            }
+
             this.myStream.getTracks().forEach(
                 track => track.stop()
             )
             this.myStream = null
-            this.setState({
-                myVideoOn: false,
-            })
+
             if (this.myVideoRef.current) {
                 this.myVideoRef.current.srcObject.getTracks().forEach(
                     track => track.stop()
                 )
                 this.myVideoRef.current.srcObject = null
             }
+            this.setState({
+                myVideoOn: false,
+            })
 
         } else {
             navigator.mediaDevices.getUserMedia({video: { width: 1200, height: 680 }, audio: false})
                 .then( stream => {
+                    this.myStream = stream
                     this.state.users.forEach(userID => {
                         if (userID === user.id) return
+                        console.log("ek na ek to hona hi hai")
                         if (this.acceptingPeers[userID]) {
-                            console.log("Already exists")
-                            // this.acceptingPeers[userID].removeStream(this.myStream)
+                            console.log("adding to acceptingPeers", userID)
                             this.acceptingPeers[userID].addStream(stream)
+                        } else if (this.peers[userID]) {
+                            console.log("adding to peers", userID)
+                            this.peers[userID].addStream(stream)
                         } else {
-                            this.callUser(userID, user.id, stream)
+                            alert("Neither lol")
                         }
                     })
-                    this.myStream = stream
                     this.setState({
                         myVideoOn: true,
                     })
                 })
                 .catch( err => {
-                    alert("Error turning on video myStream")
+                    console.log("err", err)
                 })
 
             navigator.mediaDevices.getUserMedia({video: { width: 240, height: 150 }, audio: false})

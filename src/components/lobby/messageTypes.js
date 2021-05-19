@@ -13,3 +13,8 @@ export const ALL_USERS = 'all_users'
 export const HEY = 'hey'
 export const CALL_ACCEPTED = 'call_accepted'
 export const USER_TURNED_OFF_VIDEO = 'user_turned_off_video'
+
+
+// NEW
+export const SENDING_SIGNAL = 'sending_signal'
+export const RETURNING_SIGNAL = 'returning_signal'
