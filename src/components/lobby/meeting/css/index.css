@@ -2,7 +2,7 @@
     height: 680px !important;
     width: 1200px !important;  
     border-radius: 5px !important;  
-    background-color: black;
+    background-color: blue;
     position: relative; 
 }
 
@@ -18,7 +18,7 @@
 #primaryVideo {
     border-radius: 5px !important;  
     position: absolute;
-    display: stretch !important;
+    /*display: stretch !important;*/
     width: 1200px !important;
     height: 680px !important;
 }
@@ -27,13 +27,17 @@
     display: none;
 }
 
-#secondaryVideoContainer {
+#myVideoContainer {
     border-radius: 5px !important;
     height: 150px !important;
     width: 240px !important;
-    background-color: yellow;
+    /*background-color: yellow;*/
     position: absolute;
     bottom: 1.5rem; right: 1.5rem;
+}
+
+#myVideo {
+    border-radius: 5px !important;
 }
 
 #meeting-content {

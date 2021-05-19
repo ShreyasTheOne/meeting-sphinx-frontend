@@ -265,7 +265,7 @@ class Home extends Component {
                     <Modal.Content
                         id='createModalContent'
                     >
-                        {/* <Button
+                        <Button
                             size='big'
                             fluid
                             color='red'
@@ -274,7 +274,7 @@ class Home extends Component {
                         >
                             Generate Sphinx Video Conference Link
                         </Button>
-                        <Divider horizontal>Or</Divider> */}
+                        <Divider horizontal>Or</Divider>
                         <Input
                             error={createModalInputError}
                             action={{
