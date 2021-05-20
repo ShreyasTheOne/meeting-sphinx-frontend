@@ -9,7 +9,8 @@ import {
     CALL_ACCEPTED,
     USER_TURNED_OFF_VIDEO,
     SENDING_SIGNAL,
-    RETURNING_SIGNAL
+    RETURNING_SIGNAL,
+    USER_LEFT
 } from "../messageTypes"
 import {apiWSVideoCall, routeHome} from '../../../urls'
 import './css/index.css'
@@ -229,6 +230,23 @@ class Meeting extends Component {
         }
     }
 
+    handleUserLeft = d => {
+        if (this.attendee_streams[d]) {
+            this.attendee_streams[d] = null
+        }
+        if (this.attendee_stream_refs[d]) {
+            this.attendee_stream_refs[d] = null
+        }
+        if (this.peers[d]) {
+            this.peers[d].destroy()
+            this.peers[d] = null
+        }
+        if (this.acceptingPeers[d]) {
+            this.acceptingPeers[d].destroy()
+            this.acceptingPeers[d] = null
+        }
+    }
+
     componentDidMount() {
         this.videoCallWebsocket.onmessage = e => {
             const data = JSON.parse(e.data)
@@ -239,8 +257,8 @@ class Meeting extends Component {
                 case ALL_USERS:
                     this.setUsers(d)
                     break
-                case USER_JOINED:
-                    // this.handleUserJoined(d)
+                case USER_LEFT:
+                    this.handleUserLeft(d)
                     break
                 case SENDING_SIGNAL:
                     this.handleSendingSignal(d)
@@ -349,6 +367,7 @@ class Meeting extends Component {
                     >
                         <Modal.Content>
                             <Videos
+                                ughh={new Date().toLocaleString()}
                                 show_header={true}
                                 in_modal={true}
                                 per_row={5}
@@ -383,7 +402,7 @@ class Meeting extends Component {
                             }
                         />
                         {
-                            !org_ids.includes(user.id) ?
+                            (organisers[0] && !org_ids.includes(user.id)) ?
                                 <Label
                                     style={{marginLeft: '1rem'}}
                                     as='a'

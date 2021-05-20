@@ -42,6 +42,10 @@ export const apiGetMyMeetings = () => {
     return `${apiBase()}meeting/my/`
 }
 
+export const apiBanUser = () => {
+    return `${apiBase()}meeting/ban/`
+}
+
 
 // Others
 

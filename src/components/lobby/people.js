@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import Scrollbars from 'react-custom-scrollbars'
-import { Header, Card, Image } from 'semantic-ui-react'
+import { Header, Card, Image, Button } from 'semantic-ui-react'
+import axios from 'axios'
 import './css/index.css'
+import {apiBanUser} from "../../urls";
 
 class People extends Component {
 
@@ -11,16 +13,19 @@ class People extends Component {
 
     toTitleCase (input) {
         if (!input) return ''
-        let words = input.split(' ');  
-        let ans = [];  
+        let words = input.split(' ')
+        let ans = []
         words.forEach(element => {  
             ans.push(element[0].toUpperCase() + element.slice(1, element.length).toLowerCase());  
-        });  
-        return ans.join(' '); 
+        })
+        return ans.join(' ')
     }
 
     render () {
-        const { organisers, attendees, recording } = this.props
+        const { organisers, attendees, recording, self_user } = this.props
+        let org_ids = []
+        organisers.forEach(o => {org_ids.push(o.id)})
+
         return (
             <Scrollbars style={{ width: 1000, height: 600 }}>
                 <div id='lobby-scrollbars'>
@@ -77,6 +82,17 @@ class People extends Component {
                                                 >
                                                     {this.toTitleCase(p['full_name'])}
                                                 </span>
+                                                {
+                                                    org_ids.includes(self_user.id) &&
+                                                        <Button
+                                                            className={'ban-btn'}
+                                                            onClick={() => this.props.banUser(p['id'])}
+                                                            circular
+                                                            size={'tiny'}
+                                                            icon={'ban'}
+                                                            color={rec === 'true' ? 'black' : 'red'}
+                                                        />
+                                                }
                                             </div>
                                         </Card.Content>
                                     </Card>
