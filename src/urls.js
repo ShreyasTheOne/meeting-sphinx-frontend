@@ -71,3 +71,7 @@ export function apiWSMeetings (meeting_code) {
 export function apiWSChat (meeting_code) {
     return `${apiWSBase()}meetings/${meeting_code}/chat/`
 }
+
+export function apiWSVideoCall (meeting_code) {
+    return `${apiWSBase()}meetings/${meeting_code}/video_call/`
+}

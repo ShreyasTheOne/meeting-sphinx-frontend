@@ -133,7 +133,7 @@ class Lobby extends Component {
                                     <Icon name='copy' />
                                 </Button>
                             </Button.Group>
-                            <Meeting/>
+                        <Meeting meeting_code={MeetingInformation.info.meeting_code} />
                             <Modal
                                 size='large'
                                 closeIcon

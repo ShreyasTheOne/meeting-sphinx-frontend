@@ -17,12 +17,14 @@ import {
 import {routeDashboard, routeHome} from '../../urls'
 import { toTitleCase } from '../../utils'
 
+var moment = require('moment')
+
 class NavBar extends Component {
 
     constructor (props) {
         super(props)
         this.state = {
-            now: new Date().toLocaleString(),
+            now: new Date(),
         }
     }
 
@@ -34,7 +36,7 @@ class NavBar extends Component {
         setInterval(
             () => {
                 this.setState({
-                    now: new Date().toLocaleString(),
+                    now: new Date(),
                 })
             }, 1000
         )
@@ -145,7 +147,7 @@ class NavBar extends Component {
                             </Button>
                     }
                     <Header id='home-time' size='huge'>
-                        {now}
+                        {moment(now).format('MMMM Do YYYY, h:mm:ss a')}
                     </Header>
                 </div>
                 <Modal

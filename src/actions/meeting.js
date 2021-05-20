@@ -10,7 +10,10 @@ export const initialiseMeeting = (meeting_data) => {
         meeting_info['meeting_code'] = meeting_data['meeting_code']
         meeting_info['meeting_link'] = meeting_data['meeting_link']
         meeting_info['start_time'] = meeting_data['start_time']
-        
+        let attendees = []
+        meeting_data['attendees'].forEach( a => {
+            attendees.push(a['user'])
+        })
         dispatch({
             type: INITIALISE_MEETING,
             payload: {
@@ -19,7 +22,7 @@ export const initialiseMeeting = (meeting_data) => {
                 loading: false,
                 info: meeting_info,
                 organisers: meeting_data['organizers'],
-                attendees: meeting_data['attendees'],
+                attendees: attendees,
                 recording: {}
             }
         })
@@ -35,7 +38,7 @@ export const userJoin = (data, organisers, attendees) => {
                 index = i; break;
             }
         }
-        if (index != -1) {
+        if (index !== -1) {
             if (rights === "Organiser") {
                 return
             } else {
@@ -55,7 +58,7 @@ export const userJoin = (data, organisers, attendees) => {
                 index = i; break;
             }
         }
-        if (index != -1) {
+        if (index !== -1) {
             if (rights === "Attendee") {
                 return
             } else {
