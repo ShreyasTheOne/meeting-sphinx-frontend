@@ -59,9 +59,11 @@ class People extends Component {
                        
                         attendees.map((p, index) => {
                             if(p['full_name'] !== undefined){
+                                let rec = "false"
+                                if(recording){
+                                    rec = (p.id in recording && recording[p.id]) ? 'true' : 'false'
+                                }
                                 
-                                const rec = (p.id in recording && recording[p.id]) ? 'true' : 'false'
-
                                 return (
                                     <Card
                                         className={`recording-${rec}`}

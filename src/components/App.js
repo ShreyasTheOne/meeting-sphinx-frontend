@@ -8,6 +8,7 @@ import Lobby from './lobby/lobby'
 import Home from './home/index'
 import { verifyUser } from '../actions/user'
 import Dashboard from "./dashboard";
+import Meeting_details from "./dashboard/meeting_details/index"
 
 class App extends Component {
 
@@ -65,6 +66,11 @@ class App extends Component {
                             exact
                             path={`${match.path}dashboard/`}
                             component={Dashboard}
+                        />
+                        <Route
+                            exact
+                            path={`${match.path}details/:id/`}
+                            component={Meeting_details}
                         />
                         <Redirect to=''/>
                     </Switch>

@@ -42,6 +42,9 @@ export const apiGetMyMeetings = () => {
     return `${apiBase()}meeting/my/`
 }
 
+export const apiMeetingDetails = (id) => {
+    return `${apiBase()}meeting/${id}/details/`
+}
 
 // Others
 

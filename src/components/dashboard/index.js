@@ -20,7 +20,8 @@ class Dashboard extends Component {
         this.state = {
             past_meetings: null,
             ongoing_meetings: null,
-            meeting_code: null
+            meeting_code: null,
+            meeting_id:null
         }
     }
 
@@ -43,13 +44,15 @@ class Dashboard extends Component {
             go_to_meeting: true,
             meeting_code: code
         })
+        // console.log("join" + code)
     }
 
-    seeMeetingDetails = code => {
+    seeMeetingDetails = id => {
         this.setState({
             see_meeting_details: true,
-            meeting_code: code
+            meeting_id: id
         })
+        // console.log("view" + id)
     }
 
     render(){
@@ -68,12 +71,14 @@ class Dashboard extends Component {
             return (
                 <Redirect to={`/lobby/${this.state.meeting_code}`} />
             )
+            // console.log(this.state.meeting_code)
         }
         if (this.state.see_meeting_details) {
-            // return (
-            //     <Redirect to={`/details/${this.state.meeting_code}`} />
-            // )
-            alert("SEE" + this.state.meeting_code)
+            return (
+                <Redirect to={`/details/${this.state.meeting_id}`} />
+            )
+            // alert("SEE" + this.state.meeting_code)
+            // console.log(this.state.meeting_id)
         }
 
         return (
@@ -120,6 +125,15 @@ class Dashboard extends Component {
                                                     </Table.Row>
                                                 )
                                             })}
+                                            {
+                                                ongoing_meetings.length === 0 &&
+                                                    <Table.Row>
+                                                        <Table.Cell>
+                                                            None
+                                                        </Table.Cell>
+                                                        <Table.Cell/>
+                                                    </Table.Row>
+                                            }
                                     </Table.Body>
                                 </Table>
                             </Scrollbars>
@@ -143,18 +157,19 @@ class Dashboard extends Component {
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
-
+                                            {/* {console.log(past_meetings)} */}
                                             {past_meetings.map((meeting, index) => {
                                                 return (
-                                                    <Table.Row>
+                                                    <Table.Row key={index}>
                                                     <Table.Cell>
                                                         <Header>
+                                                            
                                                             {meeting.title}
                                                         </Header>
                                                     </Table.Cell>
                                                     <Table.Cell>
                                                         <Button
-                                                            onClick={() => {this.seeMeetingDetails(meeting.meeting_code)}}
+                                                            onClick={() => {this.seeMeetingDetails(meeting.id)}}
                                                         >
                                                             See Details
                                                         </Button>
