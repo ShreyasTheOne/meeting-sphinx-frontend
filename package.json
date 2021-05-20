@@ -43,18 +43,22 @@
     },
     "build": {
         "appId": "com.sphinx.the-meeting-sphinx",
-        "extends": null,
+        "files": [
+            "build/**/*",
+            "node_modules/**/*"
+        ],
+        "directories": {
+            "buildResources": "assets"
+        },
         "linux": {
             "target": [
-                "deb",
-                "snap",
-                "rpm"
+                "deb"
             ],
-            "icon": "public/sphinx_package.png",
+            "icon": "build/sphinx_package.png",
             "category": "Office"
         }
     },
-    "main": "public/main.js",
+    "main": "public/electron.js",
     "homepage": "./",
     "scripts": {
         "react-start": "react-scripts start",
@@ -62,7 +66,8 @@
         "react-test": "react-scripts test",
         "react-eject": "react-scripts eject",
         "start": "concurrently \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
-        "dist:linux": "electron-builder --linux"
+        "dist:linux": "electron-builder --linux",
+        "preelectron-pack": "npm run react-build"
     },
     "eslintConfig": {
         "extends": [
