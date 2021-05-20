@@ -68,3 +68,9 @@
 .recording-true {
     background-color: #A5243D !important;
 }
+
+#videos-modal {
+    width: 100vw;
+    height: 100vh;
+}
+

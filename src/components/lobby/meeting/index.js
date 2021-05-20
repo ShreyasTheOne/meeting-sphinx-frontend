@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Peer from 'simple-peer'
 import { connect } from 'react-redux'
-import { Button, Icon } from 'semantic-ui-react'
+import {Button, Icon, Modal, Label} from 'semantic-ui-react'
 import {
     USER_JOINED,
     ALL_USERS,
@@ -11,8 +11,10 @@ import {
     SENDING_SIGNAL,
     RETURNING_SIGNAL
 } from "../messageTypes"
-import { apiWSVideoCall } from '../../../urls'
+import {apiWSVideoCall, routeHome} from '../../../urls'
 import './css/index.css'
+import { toTitleCase } from '../../../utils'
+import Videos from './videos'
 
 class Meeting extends Component {
 
@@ -29,6 +31,8 @@ class Meeting extends Component {
         this.myVideoRef = React.createRef()
         this.peers = {}
         this.acceptingPeers = {}
+        this.attendee_streams = {}
+        this.attendee_stream_refs = {}
         this.videoCallWebsocket = new WebSocket(apiWSVideoCall(this.props.meeting_code))
     }
 
@@ -41,99 +45,128 @@ class Meeting extends Component {
                 return u.id !== user.id
             })
         })
-        navigator.mediaDevices.getUserMedia({video: { width: 240, height: 150 }, audio: false})
-            .then( stream => {
-                if (this.myVideoRef.current) {
-                    this.myVideoRef.current.srcObject = stream
-                }
-                this.setState({
-                    myVideoOn: true,
-                })
-            })
-            .catch( err => {
-                alert("Error turning on video selfStream")
-            })
-        navigator.mediaDevices.getUserMedia({video: { width: 1200, height: 680 }, audio: false})
-            .then( stream => {
-                this.myStream = stream
-                users.forEach(userID => {
-                    if (userID === user.id) return
-                    const peer = new Peer({
-                        initiator: true,
-                        trickle: false,
-                        stream: stream,
-                    })
 
-                    peer.on("signal", signal => {
-                        this.videoCallWebsocket.send(JSON.stringify({
-                            "type": "sending_signal",
-                            "data": {signal: signal, from: user.id, to: userID}
-                        }))
-                    })
+        let organisers = this.props.MeetingInformation.organisers
+        let org_ids = []
+        organisers.forEach(o => {org_ids.push(o.id)})
 
-                    peer.on("stream", stream => {
-                        console.log("GETTING STREAM")
-                        if (this.primaryVideoRef.current) {
-                            this.primaryVideoRef.current.srcObject = stream
-                            // console.log("stream")
-                        }
+        if (org_ids.includes(user.id)) {
+            console.log("I'm an org")
+            navigator.mediaDevices.getUserMedia({video: { width: 1200, height: 680 }, audio: false})
+                .then( stream => {
+                    this.myStream = stream
+                    if (this.primaryVideoRef.current)
+                        this.primaryVideoRef.current.srcObject = stream
+                    let {attendees} = this.props.MeetingInformation
+                    users.forEach(userID => {
+                        if (userID === user.id) return
+                        const peer = new Peer({
+                            initiator: true,
+                            trickle: false,
+                            stream: stream,
+                        })
+
+                        peer.on("signal", signal => {
+                            this.videoCallWebsocket.send(JSON.stringify({
+                                "type": "sending_signal",
+                                "data": {signal: signal, from: user.id, to: userID}
+                            }))
+                        })
+
+                        peer.on("stream", stream => {
+                            console.log("GETTING STREAM")
+                            let new_stream = {}
+                            new_stream['user'] = {'id': userID}
+                            attendees.forEach(a => {
+                                if (a.id === userID) {
+                                    new_stream['user'] = a
+                                }
+                            })
+                            new_stream['stream'] = stream
+                            this.attendee_streams[userID] = new_stream
+                            this.attendee_stream_refs[userID] = [React.createRef(), React.createRef()]
+                        })
+                        this.peers[userID] = peer
                     })
-                    this.peers[userID] = peer
+                    this.setState({
+                        myVideoOn: true,
+                    })
                 })
-                // this.state.users.forEach(userID => {
-                //     if (userID === user.id) return
-                //     console.log("ek na ek to hona hi hai")
-                //     if (this.acceptingPeers[userID]) {
-                //         console.log("adding to acceptingPeers", userID)
-                //         this.acceptingPeers[userID].addStream(stream)
-                //     } else if (this.peers[userID]) {
-                //         console.log("adding to peers", userID)
-                //         this.peers[userID].addStream(stream)
-                //     } else {
-                //         alert("Neither lol")
-                //     }
-                // })
-                this.setState({
-                    myVideoOn: true,
+                .catch( err => {
+                    console.log("err", err)
                 })
-            })
-            .catch( err => {
-                console.log("err", err)
-            })
-        // users.forEach(userID => {
-        //     if (userID === user.id) return
-        //     const peer = new Peer({
-        //         initiator: true,
-        //         trickle: false,
-        //         stream: null,
-        //     })
-        //
-        //     peer.on("signal", signal => {
-        //         this.videoCallWebsocket.send(JSON.stringify({
-        //             "type": "sending_signal",
-        //             "data": {signal: signal, from: user.id, to: userID}
-        //         }))
-        //     })
-        //
-        //     peer.on("stream", stream => {
-        //         console.log("GETTING STREAM")
-        //         if (this.primaryVideoRef.current) {
-        //             this.primaryVideoRef.current.srcObject = stream
-        //             // console.log("stream")
-        //         }
-        //     })
-        //     this.peers[userID] = peer
-        // })
+        } else {
+            console.log("I'm NOT an org")
+            navigator.mediaDevices.getUserMedia({video: { width: 240, height: 150 }, audio: false})
+                .then( stream => {
+                    if (this.myVideoRef.current) {
+                        this.myVideoRef.current.srcObject = stream
+                    }
+                    this.setState({
+                        myVideoOn: true,
+                    })
+                })
+                .catch( err => {
+                    window.location = routeHome()
+                })
+            navigator.mediaDevices.getUserMedia({video: {width: 345, height: 195}, audio: false})
+                .then(stream => {
+                    this.myStream = stream
+                    users.forEach(userID => {
+                        if (userID === user.id) return
+                        // if (!org_ids.includes(userID)) return
+
+                        const peer = new Peer({
+                            initiator: true,
+                            trickle: false,
+                            stream: stream,
+                        })
+
+                        peer.on("signal", signal => {
+                            this.videoCallWebsocket.send(JSON.stringify({
+                                "type": "sending_signal",
+                                "data": {signal: signal, from: user.id, to: userID}
+                            }))
+                        })
+
+                        peer.on("stream", stream => {
+                            let organisers = this.props.MeetingInformation.organisers
+                            let attendees = this.props.MeetingInformation.attendees
+                            let org_ids = []
+                            organisers.forEach(o => {org_ids.push(o.id)})
+
+                            if (!org_ids.includes(userID)){
+                                let new_stream = {}
+                                new_stream['user'] = {'id': userID}
+                                console.log("attendees length", attendees.length)
+                                console.log("attendees", attendees)
+                                attendees.forEach(a => {
+                                    // console.log("attends", a.user.id, userID)
+                                    if (a && a.id === userID) {
+
+                                        new_stream['user'] = a
+                                    }
+                                })
+                                new_stream['stream'] = stream
+                                this.attendee_streams[userID] = new_stream
+                                this.attendee_stream_refs[userID] = React.createRef()
+                            } else {
+                                if (this.primaryVideoRef.current) {
+                                    this.primaryVideoRef.current.srcObject = stream
+                                }
+                            }
+                        })
+                        this.peers[userID] = peer
+                    })
+                    this.setState({
+                        myVideoOn: true,
+                    })
+                })
+                .catch(err => {
+                    console.log("err", err)
+                })
+        }
     }
-
-    // handleUserJoined = users => {
-    //     const user = this.props.UserInformation.data
-    //     this.setState({
-    //         users: users.filter(u => {
-    //             return u.id !== user.id
-    //         })
-    //     })
-    // }
 
     handleSendingSignal = d => {
         const user = this.props.UserInformation.data
@@ -159,11 +192,28 @@ class Meeting extends Component {
                         "data": {signal: signal, from: d.from, to: d.to}
                     }))
                 })
+
                 peer.on("stream", stream => {
-                    console.log("GETTING STREAM")
-                    if (this.primaryVideoRef.current) {
-                        this.primaryVideoRef.current.srcObject = stream
-                        // console.log("stream")
+                    const userID = d.from
+                    let organisers = this.props.MeetingInformation.organisers
+                    let attendees = this.props.MeetingInformation.attendees
+                    let org_ids = []
+                    organisers.forEach(o => {org_ids.push(o.id)})
+                    if (!org_ids.includes(userID)){
+                        let new_stream = {}
+                        new_stream['user'] = {'id': userID}
+                        attendees.forEach(a => {
+                            if (a.id === userID) {
+                                new_stream['user'] = a
+                            }
+                        })
+                        new_stream['stream'] = stream
+                        this.attendee_streams[userID] = new_stream
+                        this.attendee_stream_refs[userID] = [React.createRef(), React.createRef()]
+                    } else {
+                        if (this.primaryVideoRef.current) {
+                            this.primaryVideoRef.current.srcObject = stream
+                        }
                     }
                 })
                 peer.signal(d.signal)
@@ -209,7 +259,6 @@ class Meeting extends Component {
         const curr = this.state.myVideoOn
         const {UserInformation} = this.props
         const user = UserInformation.data
-        return
 
         if (curr) {
 
@@ -236,7 +285,7 @@ class Meeting extends Component {
             })
 
         } else {
-            navigator.mediaDevices.getUserMedia({video: { width: 1200, height: 680 }, audio: false})
+            navigator.mediaDevices.getUserMedia({video: { width: 1200, height: 680 }, audio: true})
                 .then( stream => {
                     this.myStream = stream
                     this.state.users.forEach(userID => {
@@ -248,8 +297,6 @@ class Meeting extends Component {
                         } else if (this.peers[userID]) {
                             console.log("adding to peers", userID)
                             this.peers[userID].addStream(stream)
-                        } else {
-                            alert("Neither lol")
                         }
                     })
                     this.setState({
@@ -260,29 +307,24 @@ class Meeting extends Component {
                     console.log("err", err)
                 })
 
-            navigator.mediaDevices.getUserMedia({video: { width: 240, height: 150 }, audio: false})
-                .then( stream => {
-                    if (this.myVideoRef.current) {
-                        this.myVideoRef.current.srcObject = stream
-                    }
-                    this.setState({
-                        myVideoOn: true,
-                    })
-                })
-                .catch( err => {
-                    alert("Error turning on video selfStream")
-                })
+
         }
     }
 
-    toggleAudio () {
-
+    showPeople () {
+        this.setState({
+            showPeopleModalOpen: true
+        })
     }
     
 
     render(){
         const {myVideoOn, myAudioOn, screenShare} = this.state
-        
+        let organisers = this.props.MeetingInformation.organisers
+        const {attendees, recording} = this.props.MeetingInformation
+        let org_ids = []
+        organisers.forEach(o => {org_ids.push(o.id)})
+        const user = this.props.UserInformation.data
         return(
             <div id='meeting-container'>
                 <div id="primaryVideoContainer">
@@ -293,40 +335,57 @@ class Meeting extends Component {
                     />
                 </div>
                 <div id='meeting-content'>
+                    <Modal
+                        closeIcon
+                        id={'videos-modal'}
+                        closeOnDimmerClick
+                        closeOnEscape
+                        dimmer
+                        basic
+                        open={this.state.showPeopleModalOpen}
+                        onClose={() => {this.setState({
+                            showPeopleModalOpen: false,
+                        })}}
+                    >
+                        <Modal.Content>
+                            <Videos
+                                show_header={true}
+                                in_modal={true}
+                                per_row={5}
+                                organisers={organisers}
+                                attendees={attendees}
+                                recording={recording}
+                                attendee_streams={this.attendee_streams}
+                                attendee_stream_refs={this.attendee_stream_refs}
+                            />
+                        </Modal.Content>
+                    </Modal>
                     <div id="controlsContainer">
                         <Button
-                            onClick={this.toggleAudio.bind(this)}
+                            onClick={this.showPeople.bind(this)}
                             icon
+                            size={"large"}
                             circular
                             color='black'
                         >
                             <Icon
-                                name={"microphone"}
-                                color={myAudioOn?"green":"red"}
+                                name={"user outline"}
+                                color={"blue"}
                             />
                         </Button>
-                        <Button
-                            onClick={this.toggleVideo.bind(this)}
-                            icon
-                            circular
-                            color='black'
-                        >
-                            <Icon
-                                name={"video"}
-                                color={myVideoOn?"green":"red"}
-                            />
-                        </Button>
-                        <Button
-                            onClick={() => {}}
-                            icon
-                            circular
-                            color='black'
-                        >
-                            <Icon
-                                name={"desktop"}
-                                color={screenShare?"green":"red"}
-                            />
-                        </Button>
+                        {
+                            !org_ids.includes(user.id) &&
+                                <Label
+                                    as='a'
+                                    color='black'
+                                    image
+                                    size={'medium'}
+                                >
+                                  <img src={organisers[0]['profile_picture']} />
+                                    {toTitleCase(organisers[0]['full_name'])}
+                                  <Label.Detail>Organiser</Label.Detail>
+                                </Label>
+                        }
                     </div>
                     <div id='myVideoContainer' className={myVideoOn ? '' : 'hide'}>
                         <video id='myVideo' ref={this.myVideoRef} muted autoPlay />

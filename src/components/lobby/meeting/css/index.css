@@ -1,9 +1,9 @@
 #meeting-container {
     height: 680px !important;
-    width: 1200px !important;  
-    border-radius: 5px !important;  
-    background-color: blue;
-    position: relative; 
+    width: 1200px !important;
+    border-radius: 5px !important;
+    background-color: white;
+    position: relative;
 }
 
 #primaryVideoContainer {
@@ -50,15 +50,89 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 !important;
-} 
+}
+
+#meeting-content-1 {
+    z-index: 2;
+    position: absolute;
+    top:0; left:0;
+    width: 100%;
+    height: 100%;
+    padding: 0 !important;
+}
 
 #controlsContainer {
     position: relative;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-start;
     width: 30%;
     padding-bottom: 1.5rem;
+    padding-left: 1.5rem;
     align-items: center;
 }
 
+.recording-true {
+    background-color: #A5243D !important;
+}
+.videos-scrollbars {
+    width: 100% !important;
+    height: 100% !important;
+}
+.attendee-video {
+    top: 0; left:0;
+    position: absolute;
+    z-index: 1;
+    border-radius: 5px !important;
+    height: 195px !important;
+    width: 345px !important;
+    bottom: 1.5rem; right: 1.5rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.videos-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.video-container {
+    height: 195px !important;
+    width: 345px !important;
+    border-radius: 5px !important;
+    background-color: white !important;
+    z-index: 0;
+    position: relative;
+}
+
+.video-content {
+    z-index: 3;
+    position: absolute;
+    bottom:0; left:0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+}
+.videoPP {
+    z-index: 2;
+    position: absolute;
+    top:0; left:0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.attendee-avatar {
+    box-shadow: 0 0 111px rgba(33,33,33,.2) !important;
+}
