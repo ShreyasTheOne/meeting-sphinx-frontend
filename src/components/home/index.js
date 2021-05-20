@@ -20,7 +20,7 @@ class Home extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            createModalOpen: false ,
+            createModalOpen: false,
             joinModalOpen: false,
             joinModalInputError: false,
             joinErrorMessage: '',
@@ -29,6 +29,7 @@ class Home extends Component {
             meeting_joined: false,
             meeting_code: '',
         }
+
     }
 
     componentDidUpdate () {
