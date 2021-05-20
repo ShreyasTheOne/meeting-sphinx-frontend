@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Peer from 'simple-peer'
 import { connect } from 'react-redux'
-import {Button, Icon, Modal, Label} from 'semantic-ui-react'
+import {Button, Icon, Modal, Label, Header, Image, Popup} from 'semantic-ui-react'
 import {
     USER_JOINED,
     ALL_USERS,
@@ -361,21 +361,31 @@ class Meeting extends Component {
                         </Modal.Content>
                     </Modal>
                     <div id="controlsContainer">
-                        <Button
-                            onClick={this.showPeople.bind(this)}
-                            icon
-                            size={"large"}
-                            circular
-                            color='black'
-                        >
-                            <Icon
-                                name={"user outline"}
-                                color={"blue"}
-                            />
-                        </Button>
+                        <Popup
+                            basic
+                            inverted
+                            flowing
+                            position={'top right'}
+                            content={'See all attendees'}
+                            trigger={
+                                <Button
+                                    onClick={this.showPeople.bind(this)}
+                                    icon
+                                    size={"large"}
+                                    circular
+                                    color='white'
+                                >
+                                    <Icon
+                                        name={"user outline"}
+                                        color={"black"}
+                                    />
+                                </Button>
+                            }
+                        />
                         {
-                            !org_ids.includes(user.id) &&
+                            !org_ids.includes(user.id) ?
                                 <Label
+                                    style={{marginLeft: '1rem'}}
                                     as='a'
                                     color='black'
                                     image
@@ -385,6 +395,10 @@ class Meeting extends Component {
                                     {toTitleCase(organisers[0]['full_name'])}
                                   <Label.Detail>Organiser</Label.Detail>
                                 </Label>
+                                :
+                                <span style={{marginLeft: '1rem', fontSize: '2rem', color: 'white'}}>
+                                    You are the organiser
+                                </span>
                         }
                     </div>
                     <div id='myVideoContainer' className={myVideoOn ? '' : 'hide'}>
