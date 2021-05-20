@@ -1,7 +1,8 @@
 //Frontend
+const isDev = true  // false for production
 
 export const routeHome = () => {
-    return 'http://localhost:3000/'
+    return isDev ? "http://localhost:3000/" : "./"
 }
 
 export const routeDashboard = () => {
