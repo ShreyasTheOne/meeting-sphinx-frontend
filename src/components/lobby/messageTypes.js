@@ -6,6 +6,7 @@ export const MESSAGE_DATA = 'message_data'
 export const ORGANISER_LEFT = 'organiser_left'
 export const RECORDING_STARTED = 'user_recrd_start'
 export const RECORDING_STOPPED = 'user_recrd_stop'
+export const USER_BANNED = 'user_banned'
 
 // VIDEO CALL MESSAGES
 export const ALL_USERS = 'all_users'

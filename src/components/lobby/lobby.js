@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { apiWSMeetings, routeHome } from '../../urls'
+import {apiBanUser, apiWSMeetings, routeHome} from '../../urls'
 import  {
     USER_JOINED,
     USER_LEFT,
     MEETING_DATA,
     ORGANISER_LEFT,
+    USER_BANNED,
     RECORDING_STARTED,
     RECORDING_STOPPED
 } from './messageTypes'
@@ -18,6 +19,7 @@ import { Button, Header, Icon, Loader, Modal } from 'semantic-ui-react'
 import Chat from '../chat'
 import People from './people'
 import Meeting from './meeting'
+import axios from "axios";
 
 
 class Lobby extends Component {
@@ -30,10 +32,23 @@ class Lobby extends Component {
 
         this.state = {
             code,
-            showEndMeetingModal: false
+            showEndMeetingModal: false,
+            showBannedModal: false
         }
         
         document.cookie = `current_meeting=${code};max-age=604800;path=/`
+    }
+
+    handleUserBanned = d => {
+        if (this.props.UserInformation.data.id === d.user_id) {
+            this.setState({
+                showBannedModal: true
+            })
+            setTimeout(
+                () => { window.location = routeHome() },
+                4000
+            )
+        }
     }
 
     componentDidMount () {
@@ -62,10 +77,9 @@ class Lobby extends Component {
                 case ORGANISER_LEFT:
                     this.leaveMeeting()
                     break
-                case RECORDING_STARTED:
-                    this.recordingStart();
-                case RECORDING_STOPPED:
-                    this.recordingStop();
+                case USER_BANNED:
+                    this.handleUserBanned(d)
+                    break
                 default:
                     break
             }
@@ -91,10 +105,30 @@ class Lobby extends Component {
         navigator.clipboard.writeText(code)
     }
 
+    banUser = id => {
+        axios({
+            url: apiBanUser(),
+            method: 'post',
+            data: {
+                'meeting_id': this.props.MeetingInformation.info.id,
+                'user_id': id,
+            },
+        }).then(res => {
+            this.meetingWebsocket.send(JSON.stringify({
+                'type': 'user_banned',
+                'data': {'user_id': id, 'meeting_id': this.props.MeetingInformation.info.id},
+            }))
+        }).catch(e => {
+
+        })
+
+    }
+
+
     render(){
-        const { code, joinModalOpen, showEndMeetingModal } = this.state
+        const { code, joinModalOpen, showEndMeetingModal, showBannedModal } = this.state
         const { UserInformation, MeetingInformation } = this.props
-        const { organisers, attendees, recording } = MeetingInformation
+        const { organisers, attendees, recording, info } = MeetingInformation
         const user = UserInformation.data
         console.log("recording", recording)
         if (MeetingInformation.loaded === false) {
@@ -146,7 +180,14 @@ class Lobby extends Component {
                                 })}}
                             >
                                 <Modal.Content>
-                                <People organisers={organisers} attendees={attendees} recording={recording}/>
+                                <People
+                                    banUser={this.banUser.bind(this)}
+                                    organisers={organisers}
+                                    attendees={attendees}
+                                    recording={recording}
+                                    meeting_info={info}
+                                    self_user={this.props.UserInformation.data}
+                                />
                                 </Modal.Content>
                             </Modal>
                             <Modal
@@ -164,6 +205,27 @@ class Lobby extends Component {
                                     <Button 
                                         color='green' 
                                         inverted 
+                                        onClick={() => {window.location = routeHome()}}
+                                    >
+                                        Okay
+                                    </Button>
+                                </Modal.Actions>
+                            </Modal>
+                            <Modal
+                                size='tiny'
+                                dimmer
+                                open={showBannedModal}
+                                onClose={() => {window.location = routeHome()}}
+                            >
+                                <Modal.Content>
+                                    <p>
+                                        You have been removed from this meeting by the organizer :)
+                                    </p>
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button
+                                        color='green'
+                                        inverted
                                         onClick={() => {window.location = routeHome()}}
                                     >
                                         Okay
@@ -213,7 +275,14 @@ class Lobby extends Component {
                                         <Icon name='copy' />
                                     </Button>
                                 </Button.Group>
-                                <People organisers={organisers} attendees={attendees} recording={recording}/>
+                                <People
+                                    banUser={this.banUser.bind(this)}
+                                    organisers={organisers}
+                                    attendees={attendees}
+                                    recording={recording}
+                                    meeting_info={info}
+                                    self_user={this.props.UserInformation.data}
+                                />
                                 <Modal
                                     size='tiny'
                                     dimmer
