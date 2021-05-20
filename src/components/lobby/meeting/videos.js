@@ -7,11 +7,14 @@ class Videos extends Component {
 
     constructor (props) {
         super(props)
+        this.attendee_stream_refs = this.props.attendee_stream_refs
+        this.attendee_streams = this.props.attendee_streams
     }
 
     componentDidMount () {
         const { in_modal, attendee_stream_refs, attendee_streams} = this.props
         Object.keys(attendee_streams).map( userID => {
+            if (!(attendee_streams[userID] && attendee_stream_refs[userID])) return
             const curr_stream = attendee_streams[userID]['stream']
             const curr_ref = in_modal ? attendee_stream_refs[userID][0] : attendee_stream_refs[userID][1]
             if (curr_ref.current) {
@@ -20,8 +23,18 @@ class Videos extends Component {
         })
     }
 
+    componentDidUpdate(prevProps) {
+        if(this.props.attendee_stream_refs.length !== prevProps.attendee_stream_refs.length)
+        {
+            this.attendee_stream_refs = this.props.attendee_stream_refs
+            this.attendee_streams = this.props.attendee_streams
+        }
+    }
+
+
     render () {
-        const { in_modal, attendees, recording, attendee_stream_refs, attendee_streams} = this.props
+        const { in_modal, attendees, recording, attendee_streams, attendee_stream_refs } = this.props
+
         return (
             <div className='videos-scrollbars'>
                 {this.props.show_header &&
