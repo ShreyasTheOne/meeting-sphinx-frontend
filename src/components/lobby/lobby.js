@@ -46,7 +46,7 @@ class Lobby extends Component {
             })
             setTimeout(
                 () => { window.location = routeHome() },
-                4000
+                1500
             )
         }
     }
@@ -106,22 +106,10 @@ class Lobby extends Component {
     }
 
     banUser = id => {
-        axios({
-            url: apiBanUser(),
-            method: 'post',
-            data: {
-                'meeting_id': this.props.MeetingInformation.info.id,
-                'user_id': id,
-            },
-        }).then(res => {
-            this.meetingWebsocket.send(JSON.stringify({
-                'type': 'user_banned',
-                'data': {'user_id': id, 'meeting_id': this.props.MeetingInformation.info.id},
-            }))
-        }).catch(e => {
-
-        })
-
+        this.meetingWebsocket.send(JSON.stringify({
+            'type': 'user_banned',
+            'data': {'user_id': id, 'meeting_id': this.props.MeetingInformation.info.id},
+        }))
     }
 
 
@@ -298,6 +286,27 @@ class Lobby extends Component {
                                         <Button 
                                             color='green' 
                                             inverted 
+                                            onClick={() => {window.location = routeHome()}}
+                                        >
+                                            Okay
+                                        </Button>
+                                    </Modal.Actions>
+                                </Modal>
+                                <Modal
+                                    size='tiny'
+                                    dimmer
+                                    open={showBannedModal}
+                                    onClose={() => {window.location = routeHome()}}
+                                >
+                                    <Modal.Content>
+                                        <p>
+                                            The organiser has ended this meeting!
+                                        </p>
+                                    </Modal.Content>
+                                    <Modal.Actions>
+                                        <Button
+                                            color='green'
+                                            inverted
                                             onClick={() => {window.location = routeHome()}}
                                         >
                                             Okay
