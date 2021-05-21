@@ -2,10 +2,10 @@ let psList
 let recordersDetected = []
 let standardRecorders =['obs-ffmpeg-mux', 'kazam', 'peek', 'simplescreenrec', ]
 
-const bhadang = require('axios')
+const apiRequest = require('axios')
 const { session } = require('electron')
 const WebSocket = require('ws')
-var biscuits = []
+var electron_cookies = []
 
 const apiWSChat = (meeting_code) => {
     return `ws://localhost:54321/ws/meetings/${meeting_code}/chat/`
@@ -14,9 +14,9 @@ const apiWSChat = (meeting_code) => {
 var meeting_code = ''
 
 
-function obtainBiscuits(){
+function obtainCookies(){
     session.defaultSession.cookies.get({url: "http://localhost:54321", name: 'sphinx_sessionid'}).then((cookies) => {
-        biscuits = cookies
+        electron_cookies = cookies
     }).catch((err) => {
         console.log(err)
     })
@@ -34,42 +34,43 @@ function obtainBiscuits(){
     })
 }
 
+// This function would be used if GET requests are to be made to the backend
 function pingBackendHTTP(where){
 
-    biscuit = ""
-    if(biscuits.length == 0){
-        console.error("No biscuits found")
+    electron_cookie = ""
+    if(electron_cookies.length == 0){
+        console.error("No electron cookies found")
         return
-    }else biscuit = biscuits[0]['value']
+    }else electron_cookie = electron_cookies[0]['value']
 
-    bhadang({
+    apiRequest({
         url: `http://localhost:54321/api/recording/${where}/`,
         method: 'get',
         headers: {
-            Cookie: `sphinx_sessionid=${biscuit}`,
+            Cookie: `sphinx_sessionid=${electron_cookie}`,
         },
-    }).then(dahi => {
-        console.log(dahi.data)
-    }).catch(sauce => {
-        console.log(sauce)
+    }).then(res => {
+        console.log(res.data)
+    }).catch(err => {
+        console.log(err)
     })
 
 }
 
 function pingBackendWS(type){
 
-    biscuit = ""
+    electron_cookie = ""
     
-    if(biscuits.length == 0){
-        console.error("No biscuits found")
+    if(electron_cookies.length == 0){
+        console.error("No electron_cookies found")
         return
-    }else biscuit = biscuits[0]['value']
+    }else electron_cookie = electron_cookies[0]['value']
     
 
     const ws = new WebSocket(
         apiWSChat(meeting_code), {
             headers: {
-                Cookie: `sphinx_sessionid=${biscuit}`,
+                Cookie: `sphinx_sessionid=${electron_cookie}`,
             }
         }
     )
@@ -123,7 +124,7 @@ function updateRecorders(){
 }
 
 setInterval(function(){
-    obtainBiscuits()
+    obtainCookies()
 }, 1000)
 
 setTimeout(

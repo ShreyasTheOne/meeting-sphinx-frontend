@@ -10,7 +10,7 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true
         },
-        icon: "public/sphinx_logo_icon.png"
+        icon: "./sphinx_package.png"
     })
     mainWindow.maximize()
     mainWindow.removeMenu()

@@ -219,7 +219,7 @@ class Lobby extends Component {
                                         Okay
                                     </Button>
                                 </Modal.Actions>
-                            </Modal>
+                            </Modal>                           
                         </div>
                         <div id='lobby-chat-div'>
                             <Chat 
