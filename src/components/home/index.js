@@ -32,38 +32,6 @@ class Home extends Component {
 
     }
 
-    componentDidUpdate () {
-        const d = document.getElementById("join-code-input")
-        const f = document.getElementById("create-title-input")
-        const g = document.getElementById("meeting-link-input")
-        
-        if (d) {
-            d.focus()
-            d.addEventListener("keyup",  (e) => {
-                if(e.key === "Enter"){
-                    this.joinMeeting()
-                }
-            })
-        }
-        if (f) {
-            if (document.activeElement != g) f.focus()
-            f.addEventListener("keyup",  (e) => {
-                if(e.key === "Enter"){
-                    this.createMeeting(true)
-                }
-            })
-        }
-        if (g) {
-            g.addEventListener("keyup",  (e) => {
-                if(e.key === "Enter"){
-                    this.createMeeting(true)
-                }
-            })
-        }
-        
-
-    }
-
     joinMeeting = () => {
         const { meeting_code } = this.state
         axios({

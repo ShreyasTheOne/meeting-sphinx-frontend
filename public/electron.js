@@ -10,12 +10,12 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true
         },
-        icon: "./sphinx_package.png"
+        icon: "public/sphinx_logo_icon.png"
     })
     mainWindow.maximize()
     mainWindow.removeMenu()
 
-    mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
+    mainWindow.loadURL(true ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`)
 
     mainWindow.webContents.on('new-window', function (e, url) {
         e.preventDefault();
