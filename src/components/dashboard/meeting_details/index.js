@@ -81,7 +81,7 @@ class MeetingDetails extends Component {
                         <div>
                             <Header> {moment(start_time).format('LLL')} - {moment(end_time).format('LLL')} </Header>
                         </div>
-                        <People organisers={organizers} attendees={attendees} self_user={user}/>
+                        <People organisers={organizers} attendees={attendees} self_user={user} meeting_over={'true'}/>
                     </div>
                     {
                     recordings &&

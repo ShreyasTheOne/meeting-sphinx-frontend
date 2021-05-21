@@ -22,7 +22,7 @@ class People extends Component {
     }
 
     render () {
-        const { organisers, attendees, recording, self_user } = this.props
+        const { organisers, attendees, recording, self_user, meeting_over } = this.props
         let org_ids = []
         organisers.forEach(o => {org_ids.push(o.id)})
 
@@ -86,7 +86,7 @@ class People extends Component {
                                                     {this.toTitleCase(p['full_name'])}
                                                 </span>
                                                 {
-                                                    org_ids.includes(self_user.id) &&
+                                                    meeting_over !== 'true' && org_ids.includes(self_user.id) &&
                                                         <Button
                                                             className={'ban-btn'}
                                                             onClick={() => this.props.banUser(p['id'])}
